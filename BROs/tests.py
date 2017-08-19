@@ -19,6 +19,9 @@ class UserTestCase(LiveServerTestCase):
         # User open home page
         home_page = self.browser.get(self.live_server_url + '/')
         # and sees name of the site in the heading
-        self.assertEqual(self.browser.find_element_by_css_selector('.navbar-brand'), 'BROs')
-
+        self.assertEqual(self.browser.find_element_by_css_selector('.navbar-brand').text, 'BROs')
+        # and login and register menus
+        self.assertIsNotNone(self.browser.find_element_by_link_text('Log In'))
+        self.assertIsNotNone(self.browser.find_element_by_link_text('Sign Up'))
+        #
         self.fail('Incomplete test')

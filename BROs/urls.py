@@ -13,9 +13,22 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from registration.backends.simple.views import RegistrationView
+from django.shortcuts import reverse
+from django.conf.urls import url, include
 from django.contrib import admin
+from profiles.views import IndexView, RegisterProfileView, ProfileView
+
+
+class MyRegistrationView(RegistrationView):
+    def get_success_url(self, user):
+        return reverse('register_profile')
 
 urlpatterns = [
+    url(r'^$', IndexView.as_view(), name='index'),
+    url(r'^register_profile/$', RegisterProfileView.as_view(), name='register_profile'),
+    url(r'^profile/(?P<username>[\w\-]+)/$', ProfileView.as_view(), name='profile'),
+    url(r'^accounts/register/$', MyRegistrationView.as_view(), name='registration_register'),
+    url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^admin/', admin.site.urls),
 ]
