@@ -1,13 +1,22 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import TemplateView, FormView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from registration.backends.simple.views import RegistrationView
 from profiles.forms import User, UserProfile, UserProfileForm
 
 
 class IndexView(TemplateView):
     template_name = 'index.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
+
+class MyRegistrationView(RegistrationView):
+    def get_success_url(self, user):
+        return reverse('register_profile')
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
@@ -39,10 +48,13 @@ class RegisterProfileView(FormView):
         print(form.errors)
         return super().form_invalid(form)
 
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
 
 @method_decorator(login_required, name='dispatch')
 class ProfileView(FormView):
-    template_name = 'rango/profile.html'
+    template_name = 'profiles/profile.html'
     form_class = UserProfileForm
 
     def dispatch(self, request, *args, **kwargs):
@@ -52,7 +64,12 @@ class ProfileView(FormView):
         except User.DoesNotExist:
             return redirect('index')
         self.userprofile = UserProfile.objects.get_or_create(user=self.user)[0]
-        self.form = UserProfileForm({'website': self.userprofile.website, 'picture': self.userprofile.picture})
+        self.form = UserProfileForm({'first_name': self.userprofile.first_name,
+                                     'last_name': self.userprofile.last_name,
+                                     'avatar': self.userprofile.avatar,
+                                     'birthday': self.userprofile.birthday,
+                                     'town': self.userprofile.town,
+                                     'relationship': self.userprofile.relationship})
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -75,3 +92,6 @@ class ProfileView(FormView):
     def form_invalid(self, form):
         print(form.errors)
         return super().form_invalid(form)
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)

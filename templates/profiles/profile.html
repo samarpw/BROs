@@ -5,8 +5,8 @@
 
 {% block body_block %}
     <h1>{{ selecteduser.username }}'s profile</h1>
-    {% if userprofile.picture %}
-        <img src="{{ MEDIA_URL }}{{userprofile.picture }}" width="300" height="300" alt="{{selecteduser.username}}" />
+    {% if userprofile.avatar %}
+        <img src="{{ MEDIA_URL }}{{ userprofile.avatar }}" width="300" height="300" alt="{{ selecteduser.username }}" />
     {% else %}
         <p>No image was uploaded</p>
     {% endif %}
@@ -19,7 +19,7 @@
                 <input type="submit" value="Update" />
             </form>
         {% else %}
-            <p><strong>Website</strong><a href="{{userprofile.website}}">{{userprofile.website}}</a></p>
+            <!--<p><strong>Website</strong><a href="{{userprofile.website}}">{{userprofile.website}}</a></p>-->
         {% endif %}
     </div>
     <div id="edit_profile"></div>

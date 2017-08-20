@@ -1,4 +1,4 @@
-{% extends "rango/base.html" %}
+{% extends "base.html" %}
 {% block body_block %}
     <h2 class="form-signin-heading">Sign Up Here</h2>
     <form role="form" method="post" action=".">
@@ -24,5 +24,9 @@
             </p>
         </div>
         <button type="submit" class="btn btn-default">Submit</button>
+
+        {% if form.errors %}
+            <p>{{ form.errors }}</p>
+        {% endif %}
     </form>
 {% endblock %}

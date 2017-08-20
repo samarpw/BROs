@@ -44,7 +44,7 @@
                 <a class="nav-link" href="{% url 'profile' user.username %}">Profile</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'auth_logout' %}?next=/rango/">Logout</a>
+                <a class="nav-link" href="{% url 'auth_logout' %}?next=/">Logout</a>
             </li>
         {% else %}
             <li class="nav-item">
