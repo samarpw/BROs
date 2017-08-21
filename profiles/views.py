@@ -83,6 +83,7 @@ class ProfileView(FormView):
             return super().get(request, *args, **kwargs)
 
     def get_form(self, *args, **kwargs):
+
         return self.form_class(self.request.POST, self.request.FILES, instance=self.userprofile)
 
     def form_valid(self, form):

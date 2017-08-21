@@ -22,5 +22,8 @@
             <!--<p><strong>Website</strong><a href="{{userprofile.website}}">{{userprofile.website}}</a></p>-->
         {% endif %}
     </div>
-    <div id="edit_profile"></div>
+    <br>
+    <div id="edit_profile">
+        <a href="{% url 'auth_password_change' %}">Change Password</a>
+    </div>
 {% endblock %}

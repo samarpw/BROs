@@ -2,7 +2,7 @@ from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from config import chrome_driver_path
-from os import path
+from os import path, remove
 
 
 class UserTestCase(LiveServerTestCase):
@@ -21,8 +21,11 @@ class UserTestCase(LiveServerTestCase):
         self.user_town = 'Radom'
         self.user_relationship = 'single'
 
+        self.post_text = 'Test post. Hello all.'
+
     def tearDown(self):
         self.browser.quit()
+        remove('./media/avatars/example_avatar.jpg')
 
     def test_user_can_search_for_friends(self):
         """
@@ -76,6 +79,16 @@ class UserTestCase(LiveServerTestCase):
                          self.user_town)
         self.assertEqual(Select(self.browser.find_element_by_id('id_relationship')).first_selected_option.text,
                          self.user_relationship)
+
+        # user can add post to his wall
+        post_field = self.browser.find_element_by_id('post_text')
+        add_post_button = self.browser.find_element_by_id('add_post')
+        post_field.send_keys(self.post_text)
+        add_post_button.click()
+
+        # post is visible on his wall
+        posts = self.browser.find_elements_by_css_selector('.posts')
+        self.assertEqual(posts[0].text, self.post_text)
 
         # import pdb;pdb.set_trace()
         self.fail('Incomplete test')

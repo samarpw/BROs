@@ -14,3 +14,28 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class Comment(models.Model):
+    author = models.ForeignKey(User)
+    date = models.DateTimeField(auto_created=True)
+    attachments = list()
+    replies = list()
+    likes = list()
+    likes_count = models.IntegerField(default=0)
+
+
+class Post(models.Model):
+    author = models.ForeignKey(User)
+    comments = list()
+    date = models.DateTimeField(auto_created=True)
+    attachments = list()
+    likes = list()
+    likes_count = models.IntegerField(default=0)
+    shares = list()
+    shares_count = models.IntegerField(default=0)
+
+
+class UserWall(models.Model):
+    profile = models.OneToOneField(UserProfile)
+    posts = list()
