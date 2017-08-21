@@ -1,1 +1,26 @@
 {% extends "base.html" %}
+
+{% block title_block %}
+    {% if user.is_authenticated %}
+        {{ selecteduser.username }} Wall
+    {% endif %}
+{% endblock %}
+
+{% block body_block %}
+    {% if user.is_authenticated %}
+        <br/>
+        <form method="post" action="." enctype="multipart/form-data">
+            <input id="post_text" type="text" name="post_text" value=""/>
+            <p><button type="submit" class="btn btn-default" id="add_post">Add post</button></p>
+        </form>
+    {% else %}
+        <ul>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'auth_login' %}">Log In</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'registration_register' %}">Sign Up</a>
+            </li>
+        </ul>
+    {% endif %}
+{% endblock %}

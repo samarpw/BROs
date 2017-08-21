@@ -80,6 +80,8 @@ class UserTestCase(LiveServerTestCase):
         self.assertEqual(Select(self.browser.find_element_by_id('id_relationship')).first_selected_option.text,
                          self.user_relationship)
 
+        self.browser.find_element_by_link_text('Home').click()
+
         # user can add post to his wall
         post_field = self.browser.find_element_by_id('post_text')
         add_post_button = self.browser.find_element_by_id('add_post')
