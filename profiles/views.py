@@ -49,7 +49,7 @@ class RegisterProfileView(FormView):
         return super().form_invalid(form)
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        return render(request, self.template_name, context=self.get_context_data(**kwargs))
 
 
 @method_decorator(login_required, name='dispatch')
@@ -94,4 +94,4 @@ class ProfileView(FormView):
         return super().form_invalid(form)
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        return render(request, self.template_name, context=self.get_context_data(**kwargs))
