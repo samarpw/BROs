@@ -37,8 +37,8 @@ class Post(models.Model):
     author = models.ForeignKey(UserProfile, related_name='post_author')
     date = models.DateTimeField(auto_now_add=True)
     attachment = models.FileField(upload_to=UserProfile.user_directory_path, blank=True)
-    likes = models.ManyToManyField(UserProfile, blank=True, null=True, related_name='post_like_user')
-    shares = models.ManyToManyField(UserProfile, blank=True, null=True, related_name='post_share_user')
+    likes = models.ManyToManyField(UserProfile, blank=True, related_name='post_like_user')
+    shares = models.ManyToManyField(UserProfile, blank=True, related_name='post_share_user')
 
     def add_comment(self, text, author):
         return self.comment_set.create(text=text, author=author)
@@ -64,7 +64,7 @@ class Comment(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     attachment = models.FileField(upload_to=UserProfile.user_directory_path, blank=True)
     replies = models.ForeignKey('self', null=True, blank=True, related_name='replies_set')
-    likes = models.ManyToManyField(UserProfile, blank=True, null=True, related_name='comment_like_user')
+    likes = models.ManyToManyField(UserProfile, blank=True, related_name='comment_like_user')
 
     def add_reply(self, text, author):
         return self.replies_set.create(text=text, author=author)
