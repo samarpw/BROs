@@ -3,7 +3,7 @@ django 'facebook' copy, learning project
 
 Initial structure plans:
 - profile
-	- wall
+	- personal wall / index wall
 		- posts
 			-comments
 	- friends
