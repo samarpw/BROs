@@ -55,7 +55,6 @@ class UserWallModelTestCase(BaseModelTestCase):
 
     def test_add_and_remove_post_to_wall(self):
         """Test that user can add and remove post to wall"""
-        # TODO only author
         self.wall.add_post(author=self.user_profile, text=self.post_text)
         post_count = self.wall.post_set.count()
         post = self.wall.post_set.get(id=1)
@@ -77,7 +76,6 @@ class PostModelTestCase(BaseModelTestCase):
 
     def test_add_comment_to_post(self):
         """Test user can add and remove comment to post"""
-        # TODO only author
         self.post.add_comment(text=self.comment_text, author=self.comment_author)
         post_count = self.post.comment_set.count()
         comment = self.post.comment_set.get(id=1)
@@ -89,7 +87,6 @@ class PostModelTestCase(BaseModelTestCase):
 
     def test_like_and_unlike_post(self):
         """Test user can unlike post and counter is changing"""
-        # TODO only author
         init_val = self.post.likes.count()
         self.post.like(self.user_profile)
         self.assertTrue(init_val + 1 == self.post.likes.count())
@@ -117,7 +114,6 @@ class CommentModelTestCase(BaseModelTestCase):
 
     def test_add_and_remove_reply_to_comment(self):
         """Test user can add and remove reply to comment"""
-        # TODO only author
         self.comment.add_reply(author=self.reply_author, text=self.reply_text)
         reply_count = self.comment.replies_set.count()
         reply = self.comment.replies_set.get(id=2)
@@ -129,7 +125,6 @@ class CommentModelTestCase(BaseModelTestCase):
 
     def test_like_and_unlike_comment(self):
         """Test user can like comment and counter is increasing"""
-        # TODO only author
         init_val = self.comment.likes.count()
         self.comment.like(self.user_profile)
         self.assertTrue(init_val + 1 == self.comment.likes.count())

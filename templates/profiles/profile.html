@@ -3,8 +3,10 @@
 
 {% block title_block %}{{ selecteduser.username }} Profile{% endblock %}
 
-{% block body_block %}
-    <h1>{{ selecteduser.username }}'s profile</h1>
+
+
+{% block sidebar_block %}
+    <h1>{{ selecteduser.username }}'s profile</h1><br/>
     {% if userprofile.avatar %}
         <img src="{{ MEDIA_URL }}{{ userprofile.avatar }}" width="300" height="300" alt="{{ selecteduser.username }}" />
     {% else %}
@@ -18,12 +20,24 @@
                 {{ form.as_p }}
                 <input type="submit" value="Update" />
             </form>
+            <div id="edit_profile">
+                <a href="{% url 'auth_password_change' %}">Change Password</a>
+            </div>
         {% else %}
             <!--<p><strong>Website</strong><a href="{{userprofile.website}}">{{userprofile.website}}</a></p>-->
         {% endif %}
     </div>
     <br>
-    <div id="edit_profile">
-        <a href="{% url 'auth_password_change' %}">Change Password</a>
-    </div>
+
+{% endblock %}
+
+{% block body_block %}
+    <ul class="post_list">
+    {% for post in userprofile.userwall.post_set %}
+        <li class="post" id="post_{{ post.id }}">
+            {{ post.author }} : {{ post.date }}
+            {{ post.text }}
+        </li>
+    {% endfor %}
+    </ul>
 {% endblock %}

@@ -89,7 +89,7 @@ class UserTestCase(LiveServerTestCase):
         add_post_button.click()
 
         # post is visible on his wall
-        posts = self.browser.find_elements_by_css_selector('.posts')
+        posts = self.browser.find_elements_by_css_selector('.post')
         self.assertEqual(posts[0].text, self.post_text)
 
         # import pdb;pdb.set_trace()

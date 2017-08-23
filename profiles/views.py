@@ -96,3 +96,9 @@ class ProfileView(FormView):
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, context=self.get_context_data(**kwargs))
+
+
+# @method_decorator(login_required, name='dispatch')
+# class AddPostView(TemplateView):
+#     template_name =
+#     def get_context_data(self, **kwargs):
