@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, reverse
 from django.core.urlresolvers import reverse_lazy
-from django.views.generic import TemplateView, FormView
+from django.views.generic import View, TemplateView, FormView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from registration.backends.simple.views import RegistrationView
-from profiles.forms import User, UserProfile, UserProfileForm
+from profiles.forms import UserProfileForm
+from profiles.models import User, UserProfile, Post, UserWall
 
 
 class IndexView(TemplateView):
@@ -15,6 +16,7 @@ class IndexView(TemplateView):
 
 
 class MyRegistrationView(RegistrationView):
+
     def get_success_url(self, user):
         return reverse('register_profile')
 
@@ -42,6 +44,7 @@ class RegisterProfileView(FormView):
         user_profile = form.save(commit=False)
         user_profile.user = self.request.user
         user_profile.save()
+        UserWall.objects.create(profile=user_profile)
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -98,7 +101,16 @@ class ProfileView(FormView):
         return render(request, self.template_name, context=self.get_context_data(**kwargs))
 
 
-# @method_decorator(login_required, name='dispatch')
-# class AddPostView(TemplateView):
-#     template_name =
-#     def get_context_data(self, **kwargs):
+@method_decorator(login_required, name='dispatch')
+class AddPostView(View):
+
+    def post(self, request, *args, **kwargs):
+        post_text = request.POST.get('post_text')
+        post_author_id = request.POST.get('post_author_id')
+        post_wall_id = request.POST.get('post_wall_id')
+        print(post_text, post_author_id, post_wall_id)
+        author = UserProfile.objects.get(id=post_author_id)
+        wall = UserWall.objects.get(id=post_wall_id)
+        if post_text and author and wall:
+            Post.objects.create(text=post_text, author=author, user_wall=wall)
+        return redirect(reverse('index'))

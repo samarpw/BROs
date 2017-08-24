@@ -90,7 +90,7 @@ class UserTestCase(LiveServerTestCase):
 
         # post is visible on his wall
         posts = self.browser.find_elements_by_css_selector('.post')
-        self.assertEqual(posts[0].text, self.post_text)
+        self.assertTrue(self.post_text in posts[0].text)
 
         # import pdb;pdb.set_trace()
         self.fail('Incomplete test')

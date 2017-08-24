@@ -9,11 +9,23 @@
 {% block body_block %}
     {% if user.is_authenticated %}
         <br/>
-        <form method="post" action="." enctype="multipart/form-data">
+        <form method="post" action="/add_post/" enctype="multipart/form-data">
             {% csrf_token %}
             <input id="post_text" type="text" name="post_text" value=""/>
+            <input id="post_author_id" name="post_author_id" type="hidden" value="{{user.userprofile.id}}"/>
+            <input id="post_wall_id" name="post_wall_id" type="hidden" value="{{user.userprofile.userwall.id}}"/>
             <p><button type="submit" class="btn btn-default" id="add_post">Add post</button></p>
         </form>
+
+        <ul class="post_list">
+        {% for post in user.userprofile.userwall.post_set.all %}
+            <li class="post" id="post_{{ post.id }}">
+                {{ post.author }} : {{ post.date }}
+                {{ post.text }}
+            </li>
+        {% endfor %}
+        </ul>
+
     {% else %}
         <ul>
             <li class="nav-item">

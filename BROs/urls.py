@@ -18,7 +18,7 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
-from profiles.views import IndexView, RegisterProfileView, ProfileView, MyRegistrationView
+from profiles.views import IndexView, RegisterProfileView, ProfileView, MyRegistrationView, AddPostView
 
 
 urlpatterns = [
@@ -27,5 +27,6 @@ urlpatterns = [
     url(r'^profile/(?P<username>[\w\-]+)/$', ProfileView.as_view(), name='profile'),
     url(r'^accounts/register/$', MyRegistrationView.as_view(), name='registration_register'),
     url(r'^accounts/', include('registration.backends.simple.urls')),
+    url(r'^add_post/$', AddPostView.as_view(), name='add_post'),
     url(r'^admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
