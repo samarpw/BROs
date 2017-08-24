@@ -32,12 +32,5 @@
 {% endblock %}
 
 {% block body_block %}
-    <ul class="post_list">
-    {% for post in userprofile.userwall.post_set.all %}
-        <li class="post" id="post_{{ post.id }}">
-            {{ post.author }} : {{ post.date }}
-            {{ post.text }}
-        </li>
-    {% endfor %}
-    </ul>
+    {% include 'profiles/list_posts.html' %}
 {% endblock %}

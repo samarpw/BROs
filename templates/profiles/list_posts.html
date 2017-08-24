@@ -1,0 +1,11 @@
+<div class="post_list list-group">
+        {% for post in user.userprofile.userwall.post_set.all %}
+            <div class="post list-group-item list-group-item-action flex-column align-items-start" id="post_{{ post.id }}">
+                <div class="d-flex w-100 justify-content-between">
+                    <small>{{ post.author }}</small>
+                    <small>{{ post.date }}</small>
+                </div>
+                <p class="mb-1">{{ post.text }}</p>
+            </div>
+        {% endfor %}
+</div>
