@@ -6,6 +6,16 @@
                     <small>{{ post.date }}</small>
                 </div>
                 <p class="mb-1">{{ post.text }}</p>
+                <form class="form-inline">
+                    <div class="form-group">
+                        <small><label for="comment">Comment:</label></small>
+                        <textarea type="text" class="form-control form-control-sm" id="comment" rows="1" cols="50"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-default btn-sm">Submit</button>
+                </form>
+                {% if post.comment_set.all %}
+                <small>Comments:</small>
+                {% endif %}
             </div>
         {% endfor %}
 </div>

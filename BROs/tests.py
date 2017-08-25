@@ -21,6 +21,16 @@ class UserTestCase(LiveServerTestCase):
         self.user_town = 'Radom'
         self.user_relationship = 'single'
 
+        self.user2_username = 'piotr_kowalski'
+        self.user2_email = 'kowalski@gmail.com'
+        self.user2_pwd = 'top_secret2'
+        self.user2_avatar = path.abspath('./media/example_avatar.jpg')
+        self.user2_first_name = 'Piotr'
+        self.user2_last_name = 'Kowalski'
+        self.user2_bod = '1999-01-01'
+        self.user2_town = 'Kraków'
+        self.user2_relationship = 'single'
+
         self.post_text = 'Test post. Hello all.'
 
     def tearDown(self):
@@ -32,7 +42,7 @@ class UserTestCase(LiveServerTestCase):
         Test that user can search for friends
         """
         # User open home page
-        home_page = self.browser.get(self.live_server_url + '/')
+        self.browser.get(self.live_server_url + '/')
         # and sees name of the site in the heading
         self.assertEqual(self.browser.find_element_by_css_selector('.navbar-brand').text, 'BROs')
         # and login and register menus

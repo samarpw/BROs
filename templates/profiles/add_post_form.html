@@ -1,0 +1,7 @@
+<form method="post" action="/add_post/" enctype="multipart/form-data" id="post_form">
+    {% csrf_token %}
+    <textarea class="form-control" rows="4" name="post_text" id="post_text" placeholder="Enter Post text here..."></textarea>
+    <input id="post_author_id" name="post_author_id" type="hidden" value="{{user.userprofile.id}}"/>
+    <input id="post_wall_id" name="post_wall_id" type="hidden" value="{{user.userprofile.userwall.id}}"/>
+    <p><button type="submit" class="btn btn-default" id="add_post">Add post</button></p>
+</form>

@@ -17,7 +17,7 @@ class IndexView(TemplateView):
 
 class MyRegistrationView(RegistrationView):
 
-    def get_success_url(self, user):
+    def get_success_url(self, user=None):
         return reverse('register_profile')
 
     def get(self, request, *args, **kwargs):
