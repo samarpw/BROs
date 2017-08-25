@@ -108,7 +108,6 @@ class AddPostView(View):
         post_text = request.POST.get('post_text')
         post_author_id = request.POST.get('post_author_id')
         post_wall_id = request.POST.get('post_wall_id')
-        print(post_text, post_author_id, post_wall_id)
         author = UserProfile.objects.get(id=post_author_id)
         wall = UserWall.objects.get(id=post_wall_id)
         if post_text and author and wall:

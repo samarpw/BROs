@@ -91,6 +91,12 @@ class UserTestCase(LiveServerTestCase):
         # post is visible on his wall
         posts = self.browser.find_elements_by_css_selector('.post')
         self.assertTrue(self.post_text in posts[0].text)
+        self.assertTrue(' '.join([self.user_first_name, self.user_last_name]) in posts[0].text)
 
-        # import pdb;pdb.set_trace()
+        # user can add comment to post
+
+
+        # user can remove post (only on his wall)
+
+        import pdb;pdb.set_trace()
         self.fail('Incomplete test')

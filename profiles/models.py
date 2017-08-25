@@ -16,7 +16,7 @@ class UserProfile(models.Model):
         return ' '.join([str(self.first_name), str(self.last_name)])
 
     def __str__(self):
-        return self.user.username
+        return self.get_visible_name()
 
     @staticmethod
     def user_directory_path(instance, filename):
