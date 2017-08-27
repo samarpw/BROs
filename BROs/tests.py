@@ -32,12 +32,16 @@ class UserTestCase(LiveServerTestCase):
         self.user2_relationship = 'single'
 
         self.post_text = 'Test post. Hello all.'
+        self.comment_text = 'I Like It'
 
     def tearDown(self):
         self.browser.quit()
-        remove('./media/avatars/example_avatar.jpg')
+        try:
+            remove('./media/avatars/example_avatar.jpg')
+        except:
+            pass
 
-    def test_user_can_search_for_friends(self):
+    def test_user_can_add_post_and_comment(self):
         """
         Test that user can search for friends
         """
@@ -104,7 +108,15 @@ class UserTestCase(LiveServerTestCase):
         self.assertTrue(' '.join([self.user_first_name, self.user_last_name]) in posts[0].text)
 
         # user can add comment to post
+        comment_field = posts[0].find_element_by_id('comment_text')
+        add_comment_button = posts[0].find_element_by_id('add_comment')
+        comment_field.send_keys(self.comment_text)
+        add_comment_button.click()
 
+        # comment is visible under post
+        comments = self.browser.find_elements_by_css_selector('.comment')
+        self.assertTrue(self.comment_text in comments[0].text)
+        self.assertTrue(' '.join([self.user_first_name, self.user_last_name]) in comments[0].text)
 
         # user can remove post (only on his wall)
 

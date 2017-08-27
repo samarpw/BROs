@@ -18,7 +18,7 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
-from profiles.views import IndexView, RegisterProfileView, ProfileView, MyRegistrationView, AddPostView
+from profiles.views import IndexView, RegisterProfileView, ProfileView, MyRegistrationView, AddPostView, AddCommentView
 
 
 urlpatterns = [
@@ -28,5 +28,6 @@ urlpatterns = [
     url(r'^accounts/register/$', MyRegistrationView.as_view(), name='registration_register'),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^add_post/$', AddPostView.as_view(), name='add_post'),
+    url(r'^add_comment/$', AddCommentView.as_view(), name='add_comment'),
     url(r'^admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

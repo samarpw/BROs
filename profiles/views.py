@@ -5,14 +5,23 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from registration.backends.simple.views import RegistrationView
 from profiles.forms import UserProfileForm
-from profiles.models import User, UserProfile, Post, UserWall
+from profiles.models import User, UserProfile, Post, UserWall, Comment
 
 
 class IndexView(TemplateView):
     template_name = 'index.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            self.userprofile = UserProfile.objects.get(user=self.request.user)
+            context['userprofile'] = self.userprofile
+        except Exception as e:
+            context['userprofile'] = None
+        return context
+
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        return render(request, self.template_name, context=self.get_context_data(**kwargs))
 
 
 class MyRegistrationView(RegistrationView):
@@ -112,4 +121,18 @@ class AddPostView(View):
         wall = UserWall.objects.get(id=post_wall_id)
         if post_text and author and wall:
             Post.objects.create(text=post_text, author=author, user_wall=wall)
-        return redirect(reverse('index'))
+        return redirect(reverse('profile', kwargs={'username': wall.profile.user.username}))
+
+
+@method_decorator(login_required, name='dispatch')
+class AddCommentView(View):
+
+    def post(self, request, *args, **kwargs):
+        comment_text = request.POST.get('comment_text')
+        comment_author_id = request.POST.get('comment_author_id')
+        post_id = request.POST.get('post_id')
+        author = UserProfile.objects.get(id=comment_author_id)
+        post = Post.objects.get(id=post_id)
+        if comment_text and author and post:
+            Comment.objects.create(text=comment_text, author=author, post=post)
+            return redirect(reverse('profile', kwargs={'username': post.user_wall.profile.user.username}))

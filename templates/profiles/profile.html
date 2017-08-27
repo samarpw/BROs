@@ -24,7 +24,11 @@
                 <a href="{% url 'auth_password_change' %}">Change Password</a>
             </div>
         {% else %}
-            <!--<p><strong>Website</strong><a href="{{userprofile.website}}">{{userprofile.website}}</a></p>-->
+            <p>Name: {{ userprofile.first_name }}</p>
+            <p>Surname: {{ userprofile.last_name }}</p>
+            <p>Birthday: {{ userprofile.birthday }}</p>
+            <p>Town: {{ userprofile.town }}</p>
+            <p>Relationship: {{ userprofile.relationship }}</p>
         {% endif %}
     </div>
     <br>

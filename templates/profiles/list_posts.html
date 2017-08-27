@@ -1,21 +1,40 @@
 <div class="post_list list-group">
-        {% for post in user.userprofile.userwall.post_set.all %}
+        {% for post in userprofile.userwall.post_set.all %}
             <div class="post list-group-item list-group-item-action flex-column align-items-start" id="post_{{ post.id }}">
                 <div class="d-flex w-100 justify-content-between">
                     <small>{{ post.author }}</small>
                     <small>{{ post.date }}</small>
                 </div>
                 <p class="mb-1">{{ post.text }}</p>
-                <form class="form-inline">
-                    <div class="form-group">
-                        <small><label for="comment">Comment:</label></small>
-                        <textarea type="text" class="form-control form-control-sm" id="comment" rows="1" cols="50"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-default btn-sm">Submit</button>
-                </form>
-                {% if post.comment_set.all %}
-                <small>Comments:</small>
+
+                {% if post.comment_set.count %}
+                    <small>Comments:</small>
+                    {% for comment in post.comment_set.all %}
+                        <div class="comment list-group-item list-group-item-action flex-column align-items-start"
+                             id="comment_{{ comment.id }}">
+                            <div class="d-flex w-100 justify-content-between">
+                                <small>{{ comment.author }}</small>
+                                <small>{{ comment.date }}</small>
+                            </div>
+                            <p class="mb-1">{{ comment.text }}</p>
+                        </div>
+                    {% endfor %}
                 {% endif %}
+                <div class="form-control">
+                    <form class="form-inline" method="post" action="/add_comment/" enctype="multipart/form-data" id="comment_form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <small><label for="comment_text">Comment:</label></small>
+                            <textarea type="text" class="form-control form-control-sm"
+                                      id="comment_text" name="comment_text" rows="1" cols="50"></textarea>
+                            <input id="comment_author_id" name="comment_author_id" type="hidden" value="{{user.userprofile.id}}"/>
+                            <input id="post_id" name="post_id" type="hidden" value="{{post.id}}"/>
+                        </div>
+                        <button type="submit" class="btn btn-default btn-sm" id="add_comment">Submit</button>
+                    </form>
+                </div>
+
             </div>
+            <br>
         {% endfor %}
 </div>
