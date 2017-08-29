@@ -1,13 +1,14 @@
 from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
-from config import chrome_driver_path
+from BROs.settings import get_env_variable
 from os import path, remove
 
 
 class UserTestCase(LiveServerTestCase):
 
     def setUp(self):
+        chrome_driver_path = get_env_variable('CHROMEDRIVER_PATH')
         self.browser = webdriver.Chrome(chrome_driver_path)
         self.browser.implicitly_wait(2)
 
