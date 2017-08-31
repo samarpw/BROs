@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import View, TemplateView, FormView
 from django.utils.decorators import method_decorator
@@ -136,3 +136,32 @@ class AddCommentView(View):
         if comment_text and author and post:
             Comment.objects.create(text=comment_text, author=author, post=post)
             return redirect(reverse('profile', kwargs={'username': post.user_wall.profile.user.username}))
+
+
+@method_decorator(login_required, name='dispatch')
+class LikePostView(View):
+
+    def get(self, request, *args, **kwargs):
+        post_id = request.GET['post_id']
+        profile_id = request.GET['profile_id']
+        profile = UserProfile.objects.get(id=str(profile_id))
+        likes = 0
+        if post_id:
+            post = Post.objects.get(id=int(post_id))
+            likes = post.like(profile) if post else 0
+        return HttpResponse(likes)
+
+
+@method_decorator(login_required, name='dispatch')
+class LikeCommentView(View):
+
+    def get(self, request, *args, **kwargs):
+        comment_id = request.GET['comment_id']
+        profile_id = request.GET['profile_id']
+        profile = UserProfile.objects.get(id=str(profile_id))
+        likes = 0
+        if comment_id:
+            comment = Comment.objects.get(id=int(comment_id))
+            if not comment.likes_set.get(id=profile_id):
+                likes = comment.like(profile) if comment else 0
+        return HttpResponse(likes)

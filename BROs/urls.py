@@ -13,21 +13,21 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.shortcuts import reverse
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
-from profiles.views import IndexView, RegisterProfileView, ProfileView, MyRegistrationView, AddPostView, AddCommentView
-
+from profiles import views
 
 urlpatterns = [
-    url(r'^$', IndexView.as_view(), name='index'),
-    url(r'^register_profile/$', RegisterProfileView.as_view(), name='register_profile'),
-    url(r'^profile/(?P<username>[\w\-]+)/$', ProfileView.as_view(), name='profile'),
-    url(r'^accounts/register/$', MyRegistrationView.as_view(), name='registration_register'),
+    url(r'^$', views.IndexView.as_view(), name='index'),
+    url(r'^register_profile/$', views.RegisterProfileView.as_view(), name='register_profile'),
+    url(r'^profile/(?P<username>[\w\-]+)/$', views.ProfileView.as_view(), name='profile'),
+    url(r'^accounts/register/$', views.MyRegistrationView.as_view(), name='registration_register'),
     url(r'^accounts/', include('registration.backends.simple.urls')),
-    url(r'^add_post/$', AddPostView.as_view(), name='add_post'),
-    url(r'^add_comment/$', AddCommentView.as_view(), name='add_comment'),
+    url(r'^add_post/$', views.AddPostView.as_view(), name='add_post'),
+    url(r'^add_comment/$', views.AddCommentView.as_view(), name='add_comment'),
+    url(r'^like_post/$', views.LikePostView.as_view(), name='like_post'),
+    url(r'^like_comment/$', views.LikeCommentView.as_view(), name='like_comment'),
     url(r'^admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
