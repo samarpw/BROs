@@ -14,6 +14,7 @@ $('#like_comment').click(function(){
     var profileid;
     profileid = $(this).attr("data-profileid");
     $.get('/like_comment/', {comment_id: commentid, profile_id: profileid}, function(data){
-        $('#comment_likes_count').html(data);
+        $('#comment_likes_count').html(data['likes']);
+        $('#like_comment').html(data['button']);
     });
 });
