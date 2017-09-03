@@ -4,7 +4,8 @@ $('#like_post').click(function(){
     var profileid;
     profileid = $(this).attr("data-profileid");
     $.get('/like_post/', {post_id: postid, profile_id: profileid}, function(data){
-        $('#post_likes_count').html(data);
+        $('#post_likes_count').html(data['likes']);
+        $('#like_post').html(data['button']);
     });
 });
 $('#like_comment').click(function(){

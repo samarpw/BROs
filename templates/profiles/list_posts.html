@@ -6,7 +6,15 @@
                     <small>{{ post.date }}</small>
                 </div>
                 <p class="mb-1">{{ post.text }}</p>
-
+                <div>
+                    <button id="like_post" data-postid="{{post.id}}" data-profileid="{{userprofile.id}}" class="btn btn-primary btn-sm" type="button">
+                        {% if userprofile in post.likes.all %}
+                            unLike
+                        {% else %}
+                            Like
+                        {% endif %}
+                    </button><span id="post_likes_count"> {{post.likes.count}}</span>
+                </div>
                 {% if post.comment_set.count %}
                     <small>Comments:</small>
                     {% for comment in post.comment_set.all %}

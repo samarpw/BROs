@@ -1,11 +1,12 @@
 from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from BROs.settings import get_env_variable
 from os import path, remove
 
 
-class UserTestCase(LiveServerTestCase):
+class UserTestCase(StaticLiveServerTestCase):
 
     def setUp(self):
         chrome_driver_path = get_env_variable('CHROMEDRIVER_PATH')

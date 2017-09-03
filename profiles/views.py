@@ -142,14 +142,25 @@ class AddCommentView(View):
 class LikePostView(View):
 
     def get(self, request, *args, **kwargs):
-        post_id = request.GET['post_id']
-        profile_id = request.GET['profile_id']
+        post_id = int(request.GET['post_id'])
+        profile_id = int(request.GET['profile_id'])
         profile = UserProfile.objects.get(id=str(profile_id))
         likes = 0
         if post_id:
-            post = Post.objects.get(id=int(post_id))
-            likes = post.like(profile) if post else 0
-        return HttpResponse(likes)
+            post = Post.objects.get(id=post_id)
+            try:
+                did_user_already_liked_post = post.likes.get(id=profile_id)
+                likes = post.unlike(profile)
+                button = 'Like'
+            except Exception as e:
+                likes = post.like(profile) if post else 0
+                button = 'unLike'
+        import json
+        response = json.dumps({
+            'likes': likes,
+            'button': button
+        })
+        return HttpResponse(response, content_type='application/json')
 
 
 @method_decorator(login_required, name='dispatch')
@@ -164,4 +175,6 @@ class LikeCommentView(View):
             comment = Comment.objects.get(id=int(comment_id))
             if not comment.likes_set.get(id=profile_id):
                 likes = comment.like(profile) if comment else 0
+            else:
+                likes = comment.unlike(profile)
         return HttpResponse(likes)
