@@ -4,6 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from BROs.settings import get_env_variable
 from os import path, remove
+from time import sleep
 
 
 class UserTestCase(StaticLiveServerTestCase):
@@ -90,12 +91,39 @@ class UserTestCase(StaticLiveServerTestCase):
         self.assertTrue(self.comment_text in comments[0].text)
         self.assertTrue(' '.join([self.user1['first_name'], self.user1['last_name']]) in comments[0].text)
 
-        # user can remove post (only on his wall)
-
-
         # user can like post
+        like_post_count = int(self.browser.find_element_by_id('post_likes_count').text)
+        like_post_button = self.browser.find_element_by_id('like_post')
+        like_post_button.click()
+        sleep(0.5)
+        self.assertTrue(like_post_count + 1 == int(self.browser.find_element_by_id('post_likes_count').text))
+
+        # and unlike post
+        like_post_button.click()
+        sleep(0.5)
+        self.assertTrue(like_post_count == int(self.browser.find_element_by_id('post_likes_count').text))
 
         # user can like comment
+        like_comment_count = int(self.browser.find_element_by_id('comment_likes_count').text)
+        like_comment_button = self.browser.find_element_by_id('like_comment')
+        like_comment_button.click()
+        sleep(0.5)
+        self.assertTrue(like_comment_count + 1 == int(self.browser.find_element_by_id('comment_likes_count').text))
+
+        # and unlike comment
+        like_comment_button.click()
+        sleep(0.5)
+        self.assertTrue(like_comment_count == int(self.browser.find_element_by_id('comment_likes_count').text))
+
+        # user can remove comment
+        remove_comment_button = self.browser.find_element_by_css_selector('#remove_comment_form button')
+        remove_comment_button.click()
+        self.assertFalse(self.browser.find_elements_by_css_selector('.comment'))
+
+        # user can remove post (only his own)
+        remove_post_button = self.browser.find_element_by_css_selector('#remove_post_form button')
+        remove_post_button.click()
+        self.assertFalse(self.browser.find_elements_by_css_selector('.post'))
 
         import pdb;pdb.set_trace()
         self.fail('Incomplete test')
