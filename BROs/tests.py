@@ -46,7 +46,7 @@ class UserTestCase(StaticLiveServerTestCase):
         except:
             pass
 
-    def test_user_can_add_post_and_comment(self):
+    def test_1_user_can_add_post_and_comment(self):
         """
         Test that user can search for friends
         """
@@ -125,10 +125,17 @@ class UserTestCase(StaticLiveServerTestCase):
         remove_post_button.click()
         self.assertFalse(self.browser.find_elements_by_css_selector('.post'))
 
+    def test_2_user_can_add_friend(self):
+        # User open home page
+        self.browser.get(self.live_server_url + '/')
+        #create users
+        self.create_user(self.user1, logout=True)
+        self.create_user(self.user2)
+
         import pdb;pdb.set_trace()
         self.fail('Incomplete test')
 
-    def create_user(self, user: dict):
+    def create_user(self, user: dict, logout: bool=False):
         sign_up_button = self.browser.find_element_by_link_text('Sign Up')
         sign_up_button.click()
         self.browser.find_element_by_id('id_username').send_keys(user['username'])
@@ -148,6 +155,8 @@ class UserTestCase(StaticLiveServerTestCase):
         self.browser.find_element_by_css_selector('form button').click()
         # user is created and logged in. He is redirected to index page
         self.assertEqual(self.browser.current_url, self.live_server_url + '/')
+        if logout:
+            self.browser.find_element_by_link_text('Logout').click()
 
     def validate_user(self, user: dict):
         profile_button = self.browser.find_element_by_link_text('Profile')
