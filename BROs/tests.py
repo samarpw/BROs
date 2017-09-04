@@ -3,7 +3,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from BROs.settings import get_env_variable
-from os import path, remove
+from os import path, remove, listdir
 from time import sleep
 
 
@@ -41,10 +41,10 @@ class UserTestCase(StaticLiveServerTestCase):
 
     def tearDown(self):
         self.browser.quit()
-        try:
-            remove('./media/avatars/example_avatar.jpg')
-        except:
-            pass
+        dir = './media/avatars/'
+        for item in listdir('./media/avatars/'):
+            if item.startswith('example_avatar'):
+                remove(path.join(dir, item))
 
     def test_1_user_can_add_post_and_comment(self):
         """
