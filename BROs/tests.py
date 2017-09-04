@@ -92,6 +92,7 @@ class UserTestCase(StaticLiveServerTestCase):
 
         # user can remove post (only on his wall)
 
+
         # user can like post
 
         # user can like comment

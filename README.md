@@ -24,3 +24,4 @@ Initial structure plans:
 	- events
 	- anniversaries
 	- callendar
+- restapi

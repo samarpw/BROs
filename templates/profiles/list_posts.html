@@ -4,6 +4,14 @@
             <div class="d-flex w-100 justify-content-between">
                 <small>{{ post.author }}</small>
                 <small>{{ post.date }}</small>
+                {% if user.userprofile == post.author %}
+                    <form method="post" action="/remove_post/" id="remove_post_form">
+                        {% csrf_token %}
+                        <input type="hidden" name="post_id" value="{{post.id}}">
+                        <input type="hidden" name="userprofile_id" value="{{user.userprofile.id}}">
+                        <button type="submit" class="btn btn-default btn-sm" id="remove_post">x</button>
+                    </form>
+                {% endif %}
             </div>
             <p class="mb-1">{{ post.text }}</p>
             <div class="pull-right">

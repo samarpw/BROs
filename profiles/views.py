@@ -126,6 +126,19 @@ class AddPostView(View):
 
 
 @method_decorator(login_required, name='dispatch')
+class RemovePostView(View):
+
+    def post(self, request, *args, **kwargs):
+        post_id = str(request.POST.get('post_id'))
+        userprofile_id = str(request.POST.get('userprofile_id'))
+        post = Post.objects.get(id=post_id)
+        userprofile = UserProfile.objects.get(id=userprofile_id)
+        if post.author == userprofile:
+            post.delete()
+        return redirect(reverse('profile', kwargs={'username': post.user_wall.profile.user.username}))
+
+
+@method_decorator(login_required, name='dispatch')
 class AddCommentView(View):
 
     def post(self, request, *args, **kwargs):
@@ -137,6 +150,19 @@ class AddCommentView(View):
         if comment_text and author and post:
             Comment.objects.create(text=comment_text, author=author, post=post)
             return redirect(reverse('profile', kwargs={'username': post.user_wall.profile.user.username}))
+
+
+@method_decorator(login_required, name='dispatch')
+class RemoveCommentView(View):
+
+    def post(self, request, *args, **kwargs):
+        comment_id = str(request.POST.get('comment_id'))
+        userprofile_id = str(request.POST.get('userprofile_id'))
+        comment = Comment.objects.get(id=comment_id)
+        userprofile = UserProfile.objects.get(id=userprofile_id)
+        if comment.author == userprofile:
+            comment.delete()
+        return redirect(reverse('profile', kwargs={'username': comment.post.user_wall.profile.user.username}))
 
 
 @method_decorator(login_required, name='dispatch')

@@ -53,7 +53,7 @@ class UserWallModelTestCase(BaseModelTestCase):
         super().setUp()
         self.post_text = 'test post'
 
-    def test_add_and_remove_post_to_wall(self):
+    def test_add_and_remove_post_from_wall(self):
         """Test that user can add and remove post to wall"""
         self.wall.add_post(author=self.user_profile, text=self.post_text)
         post_count = self.wall.post_set.count()
@@ -74,7 +74,7 @@ class PostModelTestCase(BaseModelTestCase):
         self.comment_text = 'test comment'
         self.comment_author = self.user_profile
 
-    def test_add_comment_to_post(self):
+    def test_add_and_remove_comment_from_post(self):
         """Test user can add and remove comment to post"""
         self.post.add_comment(text=self.comment_text, author=self.comment_author)
         post_count = self.post.comment_set.count()
@@ -112,7 +112,7 @@ class CommentModelTestCase(BaseModelTestCase):
         self.reply_text = 'test reply'
         self.reply_author = self.user_profile
 
-    def test_add_and_remove_reply_to_comment(self):
+    def test_add_and_remove_reply_from_comment(self):
         """Test user can add and remove reply to comment"""
         self.comment.add_reply(author=self.reply_author, text=self.reply_text)
         reply_count = self.comment.replies_set.count()
