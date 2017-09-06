@@ -7,7 +7,7 @@
                 <small>{{ comment.author }}</small>
                 <small>{{ comment.date }}</small>
                 {% if user.userprofile == comment.author %}
-                    <form method="post" action="/remove_comment/" id="remove_comment_form">
+                    <form method="post" action="/remove_comment/" class="remove_comment_form">
                         {% csrf_token %}
                         <input type="hidden" name="comment_id" value="{{comment.id}}">
                         <input type="hidden" name="userprofile_id" value="{{user.userprofile.id}}">
@@ -17,10 +17,9 @@
             </div>
             <p class="mb-1">{{ comment.text }}</p>
             <div class="pull-right">
-                <button id="like_comment"
-                        data-commentid="{{comment.id}}"
+                <button data-commentid="{{comment.id}}"
                         data-profileid="{{userprofile.id}}"
-                        class="btn btn-primary btn-sm"
+                        class="like_comment btn btn-primary btn-sm"
                         type="button">
                 {% if userprofile in comment.likes.all %}
                     unLike
@@ -28,7 +27,7 @@
                     Like
                 {% endif %}
                 </button>
-                <span id="comment_likes_count"> {{comment.likes.count}}</span>
+                <span class="comment_likes_count"> {{comment.likes.count}}</span>
             </div>
         </div>
     {% endfor %}
