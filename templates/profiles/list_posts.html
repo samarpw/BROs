@@ -3,24 +3,26 @@
         <div class="post list-group-item list-group-item-action flex-column align-items-start" id="post_{{ post.id }}">
             <div class="d-flex w-100 justify-content-between">
                 <small class="author">{{ post.author }}</small>
-                <small class="date">{{ post.date }}</small>
-                {% if user.userprofile == post.author %}
-                    <form method="post" action="/remove_post/" class="remove_post_form">
-                        {% csrf_token %}
-                        <input type="hidden" name="post_id" value="{{post.id}}">
-                        <input type="hidden" name="userprofile_id" value="{{user.userprofile.id}}">
-                        <button type="submit" class="btn btn-default btn-sm" id="remove_post_{{post.id}}">x</button>
-                    </form>
-                {% endif %}
+                <div class="d-flex">
+                    <small class="date">{{ post.date }}</small>
+                    {% if user.userprofile == post.author %}
+                        <form method="post" action="/remove_post/" class="remove_post_form">
+                            {% csrf_token %}
+                            <input type="hidden" name="post_id" value="{{post.id}}">
+                            <input type="hidden" name="userprofile_id" value="{{user.userprofile.id}}">
+                            <button type="submit" class="btn btn-default btn-sm" id="remove_post_{{post.id}}">x</button>
+                        </form>
+                    {% endif %}
+                </div>
             </div>
-            <div class="pull-right post_field">
+            <div class="d-flex w-100 justify-content-between post_field">
                 <a class="mb-1 post_text">{{ post.text }}</a>
                 {% if user.userprofile == post.author %}
-                <button class="btn btn-default btn-sm edit_post"
-                        data-postid="{{post.id}}"
-                        data-text="{{post.text}}">
-                    Edit
-                </button>
+                    <button class="btn btn-link btn-sm edit_post"
+                            data-postid="{{post.id}}"
+                            data-text="{{post.text}}">
+                        Edit
+                    </button>
                 {% endif %}
             </div>
 

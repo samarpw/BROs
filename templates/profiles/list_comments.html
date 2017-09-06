@@ -5,20 +5,22 @@
              id="comment_{{ comment.id }}">
             <div class="d-flex w-100 justify-content-between">
                 <small class="author">{{ comment.author }}</small>
-                <small class="date">{{ comment.date }}</small>
-                {% if user.userprofile == comment.author %}
-                    <form method="post" action="/remove_comment/" class="remove_comment_form">
-                        {% csrf_token %}
-                        <input type="hidden" name="comment_id" value="{{comment.id}}">
-                        <input type="hidden" name="userprofile_id" value="{{user.userprofile.id}}">
-                        <button type="submit" class="btn btn-default btn-sm" id="remove_comment_{{comment.id}}">x</button>
-                    </form>
-                {% endif %}
+                <div class="d-flex">
+                    <small class="date">{{ comment.date }}</small>
+                    {% if user.userprofile == comment.author %}
+                        <form method="post" action="/remove_comment/" class="remove_comment_form">
+                            {% csrf_token %}
+                            <input type="hidden" name="comment_id" value="{{comment.id}}">
+                            <input type="hidden" name="userprofile_id" value="{{user.userprofile.id}}">
+                            <button type="submit" class="btn btn-default btn-sm" id="remove_comment_{{comment.id}}">x</button>
+                        </form>
+                    {% endif %}
+                </div>
             </div>
-            <div class="pull-right comment_field">
+            <div class="d-flex w-100 justify-content-between comment_field">
                 <a class="mb-1 comment_text">{{ comment.text }}</a>
                 {% if user.userprofile == comment.author %}
-                    <button class="btn btn-default btn-sm edit_comment"
+                    <button class="btn btn-link btn-sm edit_comment"
                             data-commentid="{{comment.id}}"
                             data-text="{{comment.text}}">
                         Edit
