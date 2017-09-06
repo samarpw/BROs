@@ -4,8 +4,8 @@
         <div class="comment list-group-item list-group-item-action flex-column align-items-start"
              id="comment_{{ comment.id }}">
             <div class="d-flex w-100 justify-content-between">
-                <small>{{ comment.author }}</small>
-                <small>{{ comment.date }}</small>
+                <small class="author">{{ comment.author }}</small>
+                <small class="date">{{ comment.date }}</small>
                 {% if user.userprofile == comment.author %}
                     <form method="post" action="/remove_comment/" class="remove_comment_form">
                         {% csrf_token %}
@@ -15,7 +15,16 @@
                     </form>
                 {% endif %}
             </div>
-            <p class="mb-1">{{ comment.text }}</p>
+            <div class="pull-right comment_field">
+                <a class="mb-1 comment_text">{{ comment.text }}</a>
+                {% if user.userprofile == comment.author %}
+                    <button class="btn btn-default btn-sm edit_comment"
+                            data-commentid="{{comment.id}}"
+                            data-text="{{comment.text}}">
+                        Edit
+                    </button>
+                {% endif %}
+            </div>
             <div class="pull-right">
                 <button data-commentid="{{comment.id}}"
                         data-profileid="{{userprofile.id}}"
@@ -32,16 +41,4 @@
         </div>
     {% endfor %}
 {% endif %}
-<div class="form-control">
-    <form class="form-inline" method="post" action="/add_comment/" enctype="multipart/form-data" id="comment_form">
-        {% csrf_token %}
-        <div class="form-group">
-            <small><label for="comment_text">Comment:</label></small>
-            <textarea type="text" class="form-control form-control-sm"
-                      id="comment_text" name="comment_text" rows="1" cols="50"></textarea>
-            <input id="comment_author_id" name="comment_author_id" type="hidden" value="{{user.userprofile.id}}"/>
-            <input id="post_id" name="post_id" type="hidden" value="{{post.id}}"/>
-        </div>
-        <button type="submit" class="btn btn-default btn-sm" id="add_comment">Submit</button>
-    </form>
-</div>
+{% include 'profiles/add_comment_form.html' %}

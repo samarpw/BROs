@@ -77,8 +77,9 @@ class UserTestCase(StaticLiveServerTestCase):
 
         # post is visible on his wall
         posts = self.browser.find_elements_by_css_selector('.post')
-        self.assertTrue(self.post_text in posts[0].text)
-        self.assertTrue(' '.join([self.user1['first_name'], self.user1['last_name']]) in posts[0].text)
+        self.assertEqual(self.post_text, posts[0].find_element_by_css_selector('.post_text').text)
+        self.assertEqual(' '.join([self.user1['first_name'], self.user1['last_name']]),
+                         posts[0].find_element_by_css_selector('.author').text)
 
         # user can add comment to post
         comment_field = posts[0].find_element_by_id('comment_text')
@@ -88,32 +89,51 @@ class UserTestCase(StaticLiveServerTestCase):
 
         # comment is visible under post
         comments = self.browser.find_elements_by_css_selector('.comment')
-        self.assertTrue(self.comment_text in comments[0].text)
-        self.assertTrue(' '.join([self.user1['first_name'], self.user1['last_name']]) in comments[0].text)
+        self.assertEqual(self.comment_text, comments[0].find_element_by_css_selector('.comment_text').text)
+        self.assertEqual(' '.join([self.user1['first_name'], self.user1['last_name']]),
+                         comments[0].find_element_by_css_selector('.author').text)
 
         # user can like post
         like_post_count = int(self.browser.find_element_by_css_selector('.post_likes_count').text)
         like_post_button = self.browser.find_element_by_css_selector('.like_post')
         like_post_button.click()
         sleep(0.5)
-        self.assertTrue(like_post_count + 1 == int(self.browser.find_element_by_css_selector('.post_likes_count').text))
+        self.assertEqual(like_post_count + 1,
+                        int(self.browser.find_element_by_css_selector('.post_likes_count').text))
 
         # and unlike post
         like_post_button.click()
         sleep(0.5)
-        self.assertTrue(like_post_count == int(self.browser.find_element_by_css_selector('.post_likes_count').text))
+        self.assertEqual(like_post_count,
+                         int(self.browser.find_element_by_css_selector('.post_likes_count').text))
 
         # user can like comment
         like_comment_count = int(self.browser.find_element_by_css_selector('.comment_likes_count').text)
         like_comment_button = self.browser.find_element_by_css_selector('.like_comment')
         like_comment_button.click()
         sleep(0.5)
-        self.assertTrue(like_comment_count + 1 == int(self.browser.find_element_by_css_selector('.comment_likes_count').text))
+        self.assertEqual(like_comment_count + 1,
+                         int(self.browser.find_element_by_css_selector('.comment_likes_count').text))
 
         # and unlike comment
         like_comment_button.click()
         sleep(0.5)
-        self.assertTrue(like_comment_count == int(self.browser.find_element_by_css_selector('.comment_likes_count').text))
+        self.assertEqual(like_comment_count,
+                         int(self.browser.find_element_by_css_selector('.comment_likes_count').text))
+
+        # user can edit post
+        self.browser.find_element_by_css_selector('.edit_post').click()
+        self.browser.find_element_by_css_selector('#edit_post_form .post_text').send_keys(' edited')
+        self.browser.find_element_by_id('update_post').click()
+        self.assertEqual(self.browser.find_element_by_css_selector('.post_text').text,
+                         self.post_text + ' edited')
+
+        # user can edit comment
+        self.browser.find_element_by_css_selector('.edit_comment').click()
+        self.browser.find_element_by_css_selector('#edit_comment_form .comment_text').send_keys(' edited')
+        self.browser.find_element_by_id('update_comment').click()
+        self.assertEqual(self.browser.find_element_by_css_selector('.comment_text').text,
+                         self.comment_text + ' edited')
 
         # user can remove comment
         remove_comment_button = self.browser.find_element_by_css_selector('.remove_comment_form button')

@@ -2,8 +2,8 @@
     {% for post in userprofile.userwall.post_set.all %}
         <div class="post list-group-item list-group-item-action flex-column align-items-start" id="post_{{ post.id }}">
             <div class="d-flex w-100 justify-content-between">
-                <small>{{ post.author }}</small>
-                <small>{{ post.date }}</small>
+                <small class="author">{{ post.author }}</small>
+                <small class="date">{{ post.date }}</small>
                 {% if user.userprofile == post.author %}
                     <form method="post" action="/remove_post/" class="remove_post_form">
                         {% csrf_token %}
@@ -13,7 +13,17 @@
                     </form>
                 {% endif %}
             </div>
-            <p class="mb-1">{{ post.text }}</p>
+            <div class="pull-right post_field">
+                <a class="mb-1 post_text">{{ post.text }}</a>
+                {% if user.userprofile == post.author %}
+                <button class="btn btn-default btn-sm edit_post"
+                        data-postid="{{post.id}}"
+                        data-text="{{post.text}}">
+                    Edit
+                </button>
+                {% endif %}
+            </div>
+
             <div class="pull-right">
                 <button data-postid="{{post.id}}"
                         data-profileid="{{userprofile.id}}"

@@ -1,0 +1,7 @@
+<form method="post" action="/add_comment/" id="edit_comment_form">
+    {% csrf_token %}
+    <textarea class="fform-control form-control-sm comment_text" rows="1" cols="50" name="comment_text"></textarea>
+    <input id="comment_id" name="comment_id" type="hidden" value="{{comment_id}}"/>
+    <input type="hidden" name="_method" value="update"/>
+    <button type="submit" class="btn btn-default btn-sm" id="update_comment">Update</button>
+</form>

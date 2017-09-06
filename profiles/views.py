@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.views.generic import View, TemplateView, FormView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 from registration.backends.simple.views import RegistrationView
 from profiles.forms import UserProfileForm
 from profiles.models import User, UserProfile, Post, UserWall, Comment
@@ -115,6 +116,8 @@ class ProfileView(FormView):
 class AddPostView(View):
 
     def post(self, request, *args, **kwargs):
+        if request.POST.get('_method') == 'update':
+            return self.update(request, *args, **kwargs)
         post_text = request.POST.get('post_text')
         post_author_id = request.POST.get('post_author_id')
         post_wall_id = request.POST.get('post_wall_id')
@@ -123,6 +126,23 @@ class AddPostView(View):
         if post_text and author and wall:
             Post.objects.create(text=post_text, author=author, user_wall=wall)
         return redirect(reverse('profile', kwargs={'username': wall.profile.user.username}))
+
+    def update(self, request, *args, **kwargs):
+        post_id = request.POST.get('post_id')
+        post_text = request.POST.get('post_text')
+        post = Post.objects.get(id=str(post_id))
+        post.text = post_text
+        post.date = timezone.now()
+        post.save()
+        return redirect(reverse('profile', kwargs={'username': post.user_wall.profile.user.username}))
+
+
+@method_decorator(login_required, name='dispatch')
+class EditPostView(TemplateView):
+    template_name = 'profiles/edit_post_form.html'
+
+    def get_context_data(self, **kwargs):
+        return {'post_id': self.request.GET.get('post_id')}
 
 
 @method_decorator(login_required, name='dispatch')
@@ -142,6 +162,8 @@ class RemovePostView(View):
 class AddCommentView(View):
 
     def post(self, request, *args, **kwargs):
+        if request.POST.get('_method') == 'update':
+            return self.update(request, *args, **kwargs)
         comment_text = request.POST.get('comment_text')
         comment_author_id = request.POST.get('comment_author_id')
         post_id = request.POST.get('post_id')
@@ -150,6 +172,23 @@ class AddCommentView(View):
         if comment_text and author and post:
             Comment.objects.create(text=comment_text, author=author, post=post)
             return redirect(reverse('profile', kwargs={'username': post.user_wall.profile.user.username}))
+
+    def update(self, request, *args, **kwargs):
+        comment_id = request.POST.get('comment_id')
+        comment_text = request.POST.get('comment_text')
+        comment = Comment.objects.get(id=str(comment_id))
+        comment.text = comment_text
+        comment.date = timezone.now()
+        comment.save()
+        return redirect(reverse('profile', kwargs={'username': comment.post.user_wall.profile.user.username}))
+
+
+@method_decorator(login_required, name='dispatch')
+class EditCommentView(TemplateView):
+    template_name = 'profiles/edit_comment_form.html'
+
+    def get_context_data(self, **kwargs):
+        return {'comment_id': self.request.GET.get('comment_id')}
 
 
 @method_decorator(login_required, name='dispatch')

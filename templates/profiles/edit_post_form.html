@@ -1,0 +1,7 @@
+<form method="post" action="/add_post/" id="edit_post_form">
+    {% csrf_token %}
+    <textarea class="form-control post_text" rows="4" name="post_text"></textarea>
+    <input id="post_id" name="post_id" type="hidden" value="{{post_id}}"/>
+    <input type="hidden" name="_method" value="update"/>
+    <button type="submit" class="btn btn-default" id="update_post">Update</button>
+</form>

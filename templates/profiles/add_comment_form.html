@@ -1,0 +1,13 @@
+<div class="form-control">
+    <form class="form-inline" method="post" action="/add_comment/" enctype="multipart/form-data" id="comment_form">
+        {% csrf_token %}
+        <div class="form-group">
+            <small><label for="comment_text">Comment:</label></small>
+            <textarea type="text" class="form-control form-control-sm"
+                      id="comment_text" name="comment_text" rows="1" cols="50"></textarea>
+            <input id="comment_author_id" name="comment_author_id" type="hidden" value="{{user.userprofile.id}}"/>
+            <input id="post_id" name="post_id" type="hidden" value="{{post.id}}"/>
+        </div>
+        <button type="submit" class="btn btn-default btn-sm" id="add_comment">Submit</button>
+    </form>
+</div>
