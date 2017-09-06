@@ -148,7 +148,8 @@ class UserTestCase(StaticLiveServerTestCase):
     def test_2_user_can_add_friend(self):
         # User open home page
         self.browser.get(self.live_server_url + '/')
-        #create users
+
+        # create users
         self.create_user(self.user1, logout=True)
         self.create_user(self.user2)
 
