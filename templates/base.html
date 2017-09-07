@@ -18,7 +18,7 @@
     <link href="http://v4-alpha.getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="http://v4-alpha.getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/4.0/examples/dashboard/dashboard.css" rel="stylesheet">
 </head>
 
 <body>
@@ -40,8 +40,8 @@
                 <a class="nav-link" href="{% url 'profile' user.username %}">Profile</a>
             </li>
             <li class="nav-item">
-                <form class="form-inline mt-2 mt-md-0">
-                    <input class="form-control mr-sm-2" type="text" placeholder="Search"/>
+                <form class="form-inline mt-2 mt-md-0 search-form">
+                    <input class="form-control mr-sm-2 typeahead" type="text" placeholder="Search"/>
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                 </form>
             </li>
@@ -85,16 +85,7 @@
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
             {% block sidebar_block %}
-                <ul class="nav nav-list flex-column">
-                    <li class="nav-item">Find</li>
-                    <form>
-                        <li class="nav-item">
-                            <input class="search-query form-control" type="text" name="suggestion" value="" id="suggestion"/>
-                        </li>
-                    </form>
-                </ul>
-                <hr>
-                <div id="findings"></div>
+
             {% endblock %}
         </div>
         <div class="col-sm-9 offset-sm-3 col-md-10 offset-md-2 main">
@@ -104,13 +95,13 @@
 </div>
 
 <!-- Bootstrap core JavaScript
-  ================================================== -->
-  <!-- Placed at the end of the document so the pages load faster -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <!--<script src="{% static 'js/bros-jquery.js' %}"></script>-->
-  <script src="{% static 'js/bros-ajax.js' %}"></script>
-  <script src="http://v4-alpha.getbootstrap.com/dist/js/bootstrap.min.js"></script>
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="http://v4-alpha.getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"></script>
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!--<script src="{% static 'js/bros-jquery.js' %}"></script>-->
+    <script src="{% static 'js/bros-ajax.js' %}"></script>
+    <script src="https://getbootstrap.com/dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="http://v4-alpha.getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"></script>
 </body>
 </html>
