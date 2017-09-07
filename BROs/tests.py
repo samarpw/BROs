@@ -163,7 +163,7 @@ class UserTestCase(StaticLiveServerTestCase):
         self.browser.find_element_by_id('id_email').send_keys(user['email'])
         self.browser.find_element_by_id('id_password1').send_keys(user['password'])
         self.browser.find_element_by_id('id_password2').send_keys(user['password'])
-        self.browser.find_element_by_css_selector('form button').click()
+        self.browser.find_element_by_css_selector('form button#submit_registration').click()
         # 2nd step of registration
         self.browser.find_element_by_id('id_avatar').send_keys(user['avatar'])
         self.browser.find_element_by_id('id_first_name').send_keys(user['first_name'])
@@ -173,7 +173,7 @@ class UserTestCase(StaticLiveServerTestCase):
         bod_field.send_keys(user['birthday'])
         self.browser.find_element_by_id('id_town').send_keys(user['town'])
         Select(self.browser.find_element_by_id('id_relationship')).select_by_visible_text(user['relationship'])
-        self.browser.find_element_by_css_selector('form button').click()
+        self.browser.find_element_by_css_selector('form button#submit_registration').click()
         # user is created and logged in. He is redirected to index page
         self.assertEqual(self.browser.current_url, self.live_server_url + '/')
         if logout:
@@ -195,4 +195,4 @@ class UserTestCase(StaticLiveServerTestCase):
                          user['town'])
         self.assertEqual(Select(self.browser.find_element_by_id('id_relationship')).first_selected_option.text,
                          user['relationship'])
-        self.browser.find_element_by_link_text('Home').click()
+        self.browser.find_element_by_link_text('BROs').click()
