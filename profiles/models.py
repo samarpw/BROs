@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.shortcuts import reverse
 
 
 class UserProfile(models.Model):
@@ -12,9 +13,12 @@ class UserProfile(models.Model):
     relationship = models.CharField(blank=True, max_length=128,
                                     choices=[('1', 'married'), ('2', 'in relationship'), ('3', 'single')])
     visible_name = models.CharField(blank=True, max_length=128)
+    url = models.CharField(blank=True, max_length=256)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.visible_name = self.get_visible_name()
+        self.url = reverse('profile', args=[self.user.username])
+        print(self.url)
         return super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
     def get_visible_name(self):
@@ -31,6 +35,11 @@ class UserProfile(models.Model):
 
 class UserWall(models.Model):
     profile = models.OneToOneField(UserProfile)
+    url = models.CharField(blank=True, max_length=256)
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        self.url = self.profile.url
+        return super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
     def add_post(self, text, author):
         return self.post_set.create(text=text, author=author)
@@ -44,6 +53,11 @@ class Post(models.Model):
     attachment = models.FileField(upload_to=UserProfile.user_directory_path, blank=True)
     likes = models.ManyToManyField(UserProfile, blank=True, related_name='post_like_user')
     shares = models.ManyToManyField(UserProfile, blank=True, related_name='post_share_user')
+    url = models.CharField(blank=True, max_length=256)
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        self.url = self.user_wall.profile.url + '#post_{}'.format(self.id)
+        return super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
     def add_comment(self, text, author):
         return self.comment_set.create(text=text, author=author)
@@ -70,6 +84,12 @@ class Comment(models.Model):
     attachment = models.FileField(upload_to=UserProfile.user_directory_path, blank=True)
     replies = models.ForeignKey('self', null=True, blank=True, related_name='replies_set')
     likes = models.ManyToManyField(UserProfile, blank=True, related_name='comment_like_user')
+    url = models.CharField(blank=True, max_length=256)
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        self.url = self.post.user_wall.profile.url + '#comment_{}'.format(self.id)
+        return super().save(force_insert=force_insert, force_update=force_update, using=using,
+                            update_fields=update_fields)
 
     def add_reply(self, text, author):
         return self.replies_set.create(text=text, author=author)

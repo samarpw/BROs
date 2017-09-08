@@ -38,7 +38,19 @@ $('.edit_comment').click(function(){
 });
 $(".search-form .search-input").keyup(function(){
     var query = $(this).val();
+
     $.get('/search/', {suggestion: query}, function(data){
         $('.search-form #suggestions').html(data);
     });
 });
+$(".search-input").on('input', function () {
+    var val = this.value;
+    var chosen;
+    if($('#suggestions option').filter(function(){
+        chosen = $(this)
+        return this.value === val;
+    }).length) {
+        window.location.href = chosen.data("url");
+    }
+});
+
