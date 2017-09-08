@@ -208,8 +208,8 @@ class RemoveCommentView(View):
 class LikePostView(View):
 
     def get(self, request, *args, **kwargs):
-        post_id = str(request.GET['post_id'])
-        profile_id = str(request.GET['profile_id'])
+        post_id = str(request.GET.get('post_id'))
+        profile_id = str(request.GET.get('profile_id'))
         profile = UserProfile.objects.get(id=profile_id)
         likes = 0
         button = 'Like'
@@ -252,3 +252,18 @@ class LikeCommentView(View):
             'button': button
         })
         return HttpResponse(response, content_type='application/json')
+
+
+@method_decorator(login_required, name='dispatch')
+class SearchView(TemplateView):
+    template_name = 'suggestions.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        starts_with = self.request.GET.get('suggestion')
+        max_result = 8
+        search_results = list()
+        if starts_with:
+            search_results = UserProfile.objects.filter(visible_name__istartswith=starts_with)
+        context['suggestions'] = search_results[:max_result]
+        return context

@@ -11,9 +11,14 @@ class UserProfile(models.Model):
     town = models.CharField(blank=True, max_length=128)
     relationship = models.CharField(blank=True, max_length=128,
                                     choices=[('1', 'married'), ('2', 'in relationship'), ('3', 'single')])
+    visible_name = models.CharField(blank=True, max_length=128)
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        self.visible_name = self.get_visible_name()
+        return super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
     def get_visible_name(self):
-        return ' '.join([str(self.first_name), str(self.last_name)])
+        return ' '.join([str(self.first_name), str(self.last_name)]).strip()
 
     def __str__(self):
         return self.get_visible_name()

@@ -36,3 +36,9 @@ $('.edit_comment').click(function(){
         comment_text.find(".comment_text").text(current_text);
     });
 });
+$(".search-form .search-input").keyup(function(){
+    var query = $(this).val();
+    $.get('/search/', {suggestion: query}, function(data){
+        $('.search-form #suggestions').html(data);
+    });
+});

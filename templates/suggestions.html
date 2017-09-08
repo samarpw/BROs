@@ -1,0 +1,5 @@
+{% if suggestions %}
+    {% for element in suggestions %}
+        <option value="{{element.visible_name}}">
+    {% endfor %}
+{% endif %}
