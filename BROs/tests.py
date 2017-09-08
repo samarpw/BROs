@@ -153,6 +153,8 @@ class UserTestCase(StaticLiveServerTestCase):
         self.create_user(self.user1, logout=True)
         self.create_user(self.user2)
 
+
+
         import pdb;pdb.set_trace()
         self.fail('Incomplete test')
 

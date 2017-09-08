@@ -28,6 +28,8 @@ class BaseModelTestCase(TestCase):
                                                        relationship=self.user_relationship)
         self.wall = UserWall.objects.create(profile=self.user_profile)
         self.visible_name = ' '.join([self.user_first_name, self.user_last_name])
+        self.post_text = 'test post'
+        self.comment_text = 'test comment'
 
 
 class UserProfileModelTestCase(BaseModelTestCase):
@@ -41,6 +43,8 @@ class UserProfileModelTestCase(BaseModelTestCase):
         self.assertEqual(self.user_profile.birthday, self.user_bod)
         self.assertEqual(self.user_profile.town, self.user_town)
         self.assertEqual(self.user_profile.relationship, self.user_relationship)
+        self.assertEqual(self.user_profile.visible_name, self.visible_name)
+        self.assertEqual(self.user_profile.url, '/profile/{}/'.format(self.user_username))
 
     def test_user_visible_name(self):
         """Test visible name returned from Userprofile"""
@@ -51,7 +55,6 @@ class UserWallModelTestCase(BaseModelTestCase):
 
     def setUp(self):
         super().setUp()
-        self.post_text = 'test post'
 
     def test_add_and_remove_post_from_wall(self):
         """Test that user can add and remove post to wall"""
@@ -69,9 +72,7 @@ class PostModelTestCase(BaseModelTestCase):
 
     def setUp(self):
         super().setUp()
-        self.post_text = 'test post'
-        self.post = Post.objects.create(author=self.user_profile, text=self.post_text)
-        self.comment_text = 'test comment'
+        self.post = self.wall.add_post(author=self.user_profile, text=self.post_text)
         self.comment_author = self.user_profile
 
     def test_add_and_remove_comment_from_post(self):
@@ -106,22 +107,11 @@ class CommentModelTestCase(BaseModelTestCase):
 
     def setUp(self):
         super().setUp()
-        self.comment_text = 'test comment'
+        self.post = self.wall.add_post(author=self.user_profile, text=self.post_text)
         self.comment_author = self.user_profile
-        self.comment = Comment.objects.create(author=self.comment_author, text=self.comment_text)
+        self.comment = self.post.add_comment(author=self.comment_author, text=self.comment_text)
         self.reply_text = 'test reply'
         self.reply_author = self.user_profile
-
-    def test_add_and_remove_reply_from_comment(self):
-        """Test user can add and remove reply to comment"""
-        self.comment.add_reply(author=self.reply_author, text=self.reply_text)
-        reply_count = self.comment.replies_set.count()
-        reply = self.comment.replies_set.get(id=2)
-        self.assertEqual(reply.text, self.reply_text)
-        self.assertEqual(reply.author, self.reply_author)
-        self.assertGreaterEqual(timezone.now(), reply.date)
-        reply.delete()
-        self.assertEqual(reply_count - 1, self.comment.replies_set.count())
 
     def test_like_and_unlike_comment(self):
         """Test user can like comment and counter is increasing"""

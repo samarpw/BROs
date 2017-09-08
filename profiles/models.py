@@ -18,7 +18,6 @@ class UserProfile(models.Model):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.visible_name = self.get_visible_name()
         self.url = reverse('profile', args=[self.user.username])
-        print(self.url)
         return super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
     def get_visible_name(self):
@@ -82,7 +81,6 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, null=True)
     date = models.DateTimeField(auto_now_add=True)
     attachment = models.FileField(upload_to=UserProfile.user_directory_path, blank=True)
-    replies = models.ForeignKey('self', null=True, blank=True, related_name='replies_set')
     likes = models.ManyToManyField(UserProfile, blank=True, related_name='comment_like_user')
     url = models.CharField(blank=True, max_length=256)
 
@@ -90,9 +88,6 @@ class Comment(models.Model):
         self.url = self.post.user_wall.profile.url + '#comment_{}'.format(self.id)
         return super().save(force_insert=force_insert, force_update=force_update, using=using,
                             update_fields=update_fields)
-
-    def add_reply(self, text, author):
-        return self.replies_set.create(text=text, author=author)
 
     def like(self, user_profile):
         self.likes.add(user_profile)
