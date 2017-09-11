@@ -37,9 +37,9 @@ class ProfilesURLsTestCase(TestCase):
         suggestion_view = resolve('/remove_post/')
         self.assertEqual(suggestion_view.func.view_class, views.RemovePostView)
 
-    def test_edit_post_url(self):
-        suggestion_view = resolve('/edit_post/')
-        self.assertEqual(suggestion_view.func.view_class, views.EditNoteFormView)
+    def test_edit_note_url(self):
+        suggestion_view = resolve('/edit_note/')
+        self.assertEqual(suggestion_view.func.view_class, views.EditNoteView)
 
     def test_like_url(self):
         suggestion_view = resolve('/like/')
@@ -48,8 +48,3 @@ class ProfilesURLsTestCase(TestCase):
     def test_remove_comment_url(self):
         suggestion_view = resolve('/remove_comment/')
         self.assertEqual(suggestion_view.func.view_class, views.RemoveCommentView)
-
-    def test_edit_comment_url(self):
-        suggestion_view = resolve('/edit_comment/')
-        self.assertEqual(suggestion_view.func.view_class, views.EditCommentView)
-
