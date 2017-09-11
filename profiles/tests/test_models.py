@@ -58,7 +58,7 @@ class UserWallModelTestCase(BaseModelTestCase):
 
     def test_add_and_remove_post_from_wall(self):
         """Test that user can add and remove post to wall"""
-        self.wall.add_post(author=self.user_profile, text=self.post_text)
+        self.wall.add_note(author=self.user_profile, text=self.post_text)
         post_count = self.wall.post_set.count()
         post = self.wall.post_set.get(id=1)
         self.assertEqual(post.text, self.post_text)
@@ -72,12 +72,12 @@ class PostModelTestCase(BaseModelTestCase):
 
     def setUp(self):
         super().setUp()
-        self.post = self.wall.add_post(author=self.user_profile, text=self.post_text)
+        self.post = self.wall.add_note(author=self.user_profile, text=self.post_text)
         self.comment_author = self.user_profile
 
     def test_add_and_remove_comment_from_post(self):
         """Test user can add and remove comment to post"""
-        self.post.add_comment(text=self.comment_text, author=self.comment_author)
+        self.post.add_note(text=self.comment_text, author=self.comment_author)
         post_count = self.post.comment_set.count()
         comment = self.post.comment_set.get(id=1)
         self.assertEqual(comment.text, self.comment_text)
@@ -107,9 +107,9 @@ class CommentModelTestCase(BaseModelTestCase):
 
     def setUp(self):
         super().setUp()
-        self.post = self.wall.add_post(author=self.user_profile, text=self.post_text)
+        self.post = self.wall.add_note(author=self.user_profile, text=self.post_text)
         self.comment_author = self.user_profile
-        self.comment = self.post.add_comment(author=self.comment_author, text=self.comment_text)
+        self.comment = self.post.add_note(author=self.comment_author, text=self.comment_text)
         self.reply_text = 'test reply'
         self.reply_author = self.user_profile
 

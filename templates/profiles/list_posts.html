@@ -20,10 +20,11 @@
                 </div>
             </div>
             <div class="d-flex w-100 justify-content-between post_field">
-                <a class="mb-1 post_text">{{ post.text }}</a>
+                <a class="mb-1 note_text">{{ post.text }}</a>
                 {% if user.userprofile == post.author %}
-                    <button class="btn btn-link btn-sm edit_post"
-                            data-postid="{{post.id}}"
+                    <button class="btn btn-link btn-sm edit_note"
+                            data-noteid="{{post.id}}"
+                            data-class="Post"
                             data-text="{{post.text}}">
                         Edit
                     </button>

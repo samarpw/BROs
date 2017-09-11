@@ -9,22 +9,14 @@ $('.like').click(function(){
         button.html(data['button']);
     });
 });
-$('.edit_post').click(function(){
-    var postid = $(this).attr("data-postid");
+$('.edit_note').click(function(){
+    var noteid = $(this).attr("data-noteid");
+    var noteclass = $(this).attr("data-class");
     var current_text = $(this).attr("data-text");
-    var post_text = $(this).parent();
-    $.get('/edit_post/', {post_id: postid}, function(data){
-        post_text.html(data);
-        post_text.find(".post_text").text(current_text);
-    });
-});
-$('.edit_comment').click(function(){
-    var commentid = $(this).attr("data-commentid");
-    var current_text = $(this).attr("data-text")
-    var comment_text = $(this).parent();
-    $.get('/edit_comment/', {comment_id: commentid}, function(data){
-        comment_text.html(data);
-        comment_text.find(".comment_text").text(current_text);
+    var note_text = $(this).parent();
+    $.get('/edit_note_form/', {note_id: noteid, note_class: noteclass}, function(data){
+        note_text.html(data);
+        note_text.find(".note_text").text(current_text);
     });
 });
 $(".search-form .search-input").keyup(function(){

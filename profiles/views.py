@@ -121,38 +121,51 @@ class ProfileView(FormView):
 
 
 @method_decorator(login_required, name='dispatch')
-class AddPostView(View):
+class AddNoteView(View):
 
     def post(self, request, *args, **kwargs):
-        if request.POST.get('_method') == 'update':
-            return self.update(request, *args, **kwargs)
-        post_text = request.POST.get('post_text')
-        post_author_id = request.POST.get('post_author_id')
-        post_wall_id = request.POST.get('post_wall_id')
-        author = UserProfile.objects.get(id=post_author_id)
-        wall = UserWall.objects.get(id=post_wall_id)
-        if post_text and author and wall:
-            wall.add_post(text=post_text, author=author)
-        messages.info(request, 'Post added successfully!')
-        return redirect(reverse('profile', kwargs={'username': wall.profile.user.username}))
-
-    def update(self, request, *args, **kwargs):
-        post_id = request.POST.get('post_id')
-        post_text = request.POST.get('post_text')
-        post = Post.objects.get(id=str(post_id))
-        post.text = post_text
-        post.date = timezone.now()
-        post.save()
-        messages.info(request, 'Post updated successfully!')
-        return redirect(reverse('profile', kwargs={'username': post.user_wall.profile.user.username}))
+        note_class = request.POST.get('_class')
+        note_class = globals()[note_class]
+        note_text = request.POST.get('note_text')
+        parent_id = request.POST.get('parent_id')
+        parent_class = note_class._meta.get_field('parent').rel.to
+        parent = parent_class.objects.get(id=parent_id)
+        author_id = request.POST.get('author_id')
+        author = UserProfile.objects.get(id=author_id)
+        if note_text and author and parent:
+            note = parent.add_note(text=note_text, author=author)
+            messages.info(request, '{} added successfully!'.format(note_class.__name__))
+            return redirect(reverse('profile', kwargs={'username': note.get_wall().profile.user.username}))
 
 
 @method_decorator(login_required, name='dispatch')
-class EditPostView(TemplateView):
-    template_name = 'profiles/edit_post_form.html'
+class EditNoteView(View):
+
+    def post(self, request, *args, **kwargs):
+        note_class = request.POST.get('_class')
+        note_class = globals()[note_class]
+        note_text = request.POST.get('note_text')
+        note_id = request.POST.get('note_id')
+        note = note_class.objects.get(id=str(note_id))
+        note.text = note_text
+        note.date = timezone.now()
+        note.save()
+        messages.info(request, '{} updated successfully!'.format(note_class.__name__))
+        return redirect(reverse('profile', kwargs={'username': note.get_wall().profile.user.username}))
+
+
+@method_decorator(login_required, name='dispatch')
+class EditNoteFormView(TemplateView):
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.GET.get('note_class') == 'Post':
+            self.template_name = 'profiles/edit_post_form.html'
+        elif self.request.GET.get('note_class') == 'Comment':
+            self.template_name = 'profiles/edit_comment_form.html'
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        return {'post_id': self.request.GET.get('post_id')}
+        return {'note_id': self.request.GET.get('note_id')}
 
 
 @method_decorator(login_required, name='dispatch')
@@ -168,42 +181,7 @@ class RemovePostView(View):
             messages.info(request, 'Post deleted!')
         else:
             messages.info(request, 'You are not authorised to remove this post!')
-        return redirect(reverse('profile', kwargs={'username': post.user_wall.profile.user.username}))
-
-
-@method_decorator(login_required, name='dispatch')
-class AddCommentView(View):
-
-    def post(self, request, *args, **kwargs):
-        if request.POST.get('_method') == 'update':
-            return self.update(request, *args, **kwargs)
-        comment_text = request.POST.get('comment_text')
-        comment_author_id = request.POST.get('comment_author_id')
-        post_id = request.POST.get('post_id')
-        author = UserProfile.objects.get(id=comment_author_id)
-        post = Post.objects.get(id=post_id)
-        if comment_text and author and post:
-            post.add_comment(text=comment_text, author=author)
-            messages.info(request, 'Comment added successfully!')
-        return redirect(reverse('profile', kwargs={'username': post.user_wall.profile.user.username}))
-
-    def update(self, request, *args, **kwargs):
-        comment_id = request.POST.get('comment_id')
-        comment_text = request.POST.get('comment_text')
-        comment = Comment.objects.get(id=str(comment_id))
-        comment.text = comment_text
-        comment.date = timezone.now()
-        comment.save()
-        messages.info(request, 'Comment updated successfully!')
-        return redirect(reverse('profile', kwargs={'username': comment.post.user_wall.profile.user.username}))
-
-
-@method_decorator(login_required, name='dispatch')
-class EditCommentView(TemplateView):
-    template_name = 'profiles/edit_comment_form.html'
-
-    def get_context_data(self, **kwargs):
-        return {'comment_id': self.request.GET.get('comment_id')}
+        return redirect(reverse('profile', kwargs={'username': post.get_wall().profile.user.username}))
 
 
 @method_decorator(login_required, name='dispatch')
@@ -219,7 +197,7 @@ class RemoveCommentView(View):
             messages.info(request, 'Comment deleted!')
         else:
             messages.info(request, 'You are not authorised to remove this comment!')
-        return redirect(reverse('profile', kwargs={'username': comment.post.user_wall.profile.user.username}))
+        return redirect(reverse('profile', kwargs={'username': comment.get_wall().profile.user.username}))
 
 
 @method_decorator(login_required, name='dispatch')

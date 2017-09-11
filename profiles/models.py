@@ -40,7 +40,7 @@ class UserWall(models.Model):
         self.url = self.profile.url
         return super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
-    def add_post(self, text, author):
+    def add_note(self, text, author):
         return self.post_set.create(text=text, author=author)
 
 
@@ -71,14 +71,14 @@ class Note(models.Model):
 
 
 class Post(Note, Likable):
-    user_wall = models.ForeignKey(UserWall, null=True)
+    parent = models.ForeignKey(UserWall, null=True)
     shares = models.ManyToManyField(UserProfile, blank=True, related_name='post_share_user')
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        self.url = self.user_wall.profile.url + '#post_{}'.format(self.id)
+        self.url = self.parent.profile.url + '#post_{}'.format(self.id)
         return super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
-    def add_comment(self, text, author):
+    def add_note(self, text, author):
         return self.comment_set.create(text=text, author=author)
 
     def share(self, user_profile):
@@ -86,11 +86,17 @@ class Post(Note, Likable):
         self.shares.add(user_profile)
         return self.shares.count()
 
+    def get_wall(self):
+        return self.parent
+
 
 class Comment(Note, Likable):
-    post = models.ForeignKey(Post, null=True)
+    parent = models.ForeignKey(Post, null=True)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        self.url = self.post.user_wall.profile.url + '#comment_{}'.format(self.id)
+        self.url = self.get_wall().profile.url + '#comment_{}'.format(self.id)
         return super().save(force_insert=force_insert, force_update=force_update, using=using,
                             update_fields=update_fields)
+
+    def get_wall(self):
+        return self.parent.get_wall()

@@ -70,26 +70,26 @@ class UserTestCase(StaticLiveServerTestCase):
         self.validate_user(self.user1)
 
         # user can add post to his wall
-        post_field = self.browser.find_element_by_id('post_text')
+        post_field = self.browser.find_element_by_id('post_form_text')
         add_post_button = self.browser.find_element_by_id('add_post')
         post_field.send_keys(self.post_text)
         add_post_button.click()
 
         # post is visible on his wall
         posts = self.browser.find_elements_by_css_selector('.post')
-        self.assertEqual(self.post_text, posts[0].find_element_by_css_selector('.post_text').text)
+        self.assertEqual(self.post_text, posts[0].find_element_by_css_selector('.post .note_text').text)
         self.assertEqual(' '.join([self.user1['first_name'], self.user1['last_name']]),
                          posts[0].find_element_by_css_selector('.author').text)
 
         # user can add comment to post
-        comment_field = posts[0].find_element_by_id('comment_text')
+        comment_field = posts[0].find_element_by_id('comment_form_text')
         add_comment_button = posts[0].find_element_by_id('add_comment')
         comment_field.send_keys(self.comment_text)
         add_comment_button.click()
 
         # comment is visible under post
         comments = self.browser.find_elements_by_css_selector('.comment')
-        self.assertEqual(self.comment_text, comments[0].find_element_by_css_selector('.comment_text').text)
+        self.assertEqual(self.comment_text, comments[0].find_element_by_css_selector('.comment .note_text').text)
         self.assertEqual(' '.join([self.user1['first_name'], self.user1['last_name']]),
                          comments[0].find_element_by_css_selector('.author').text)
 
@@ -122,17 +122,18 @@ class UserTestCase(StaticLiveServerTestCase):
                          int(self.browser.find_element_by_css_selector('.comment .likes_count').text))
 
         # user can edit post
-        self.browser.find_element_by_css_selector('.edit_post').click()
-        self.browser.find_element_by_css_selector('#edit_post_form .post_text').send_keys(' edited')
+        # import pdb;pdb.set_trace()
+        self.browser.find_element_by_css_selector('.post .edit_note').click()
+        self.browser.find_element_by_css_selector('#edit_post_form .note_text').send_keys(' edited')
         self.browser.find_element_by_id('update_post').click()
-        self.assertEqual(self.browser.find_element_by_css_selector('.post_text').text,
+        self.assertEqual(self.browser.find_element_by_css_selector('.post .note_text').text,
                          self.post_text + ' edited')
 
         # user can edit comment
-        self.browser.find_element_by_css_selector('.edit_comment').click()
-        self.browser.find_element_by_css_selector('#edit_comment_form .comment_text').send_keys(' edited')
+        self.browser.find_element_by_css_selector('.comment .edit_note').click()
+        self.browser.find_element_by_css_selector('#edit_comment_form .note_text').send_keys(' edited')
         self.browser.find_element_by_id('update_comment').click()
-        self.assertEqual(self.browser.find_element_by_css_selector('.comment_text').text,
+        self.assertEqual(self.browser.find_element_by_css_selector('.comment .note_text').text,
                          self.comment_text + ' edited')
 
         # user can remove comment

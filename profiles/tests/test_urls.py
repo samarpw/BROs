@@ -29,9 +29,9 @@ class ProfilesURLsTestCase(TestCase):
         suggestion_view = resolve('/search/')
         self.assertEqual(suggestion_view.func.view_class, views.SearchView)
 
-    def test_add_post_url(self):
-        suggestion_view = resolve('/add_post/')
-        self.assertEqual(suggestion_view.func.view_class, views.AddPostView)
+    def test_add_note_url(self):
+        suggestion_view = resolve('/add_note/')
+        self.assertEqual(suggestion_view.func.view_class, views.AddNoteView)
 
     def test_remove_post_url(self):
         suggestion_view = resolve('/remove_post/')
@@ -39,16 +39,11 @@ class ProfilesURLsTestCase(TestCase):
 
     def test_edit_post_url(self):
         suggestion_view = resolve('/edit_post/')
-        self.assertEqual(suggestion_view.func.view_class, views.EditPostView)
+        self.assertEqual(suggestion_view.func.view_class, views.EditNoteFormView)
 
-    def test_like_post_url(self):
-        suggestion_view = resolve('/like_post/')
+    def test_like_url(self):
+        suggestion_view = resolve('/like/')
         self.assertEqual(suggestion_view.func.view_class, views.LikeView)
-
-    def test_add_comment_url(self):
-        suggestion_view = resolve('/add_comment/')
-        self.assertEqual(suggestion_view.func.view_class, views.AddCommentView)
-        # TODO unify add/remove/edit/like...
 
     def test_remove_comment_url(self):
         suggestion_view = resolve('/remove_comment/')
@@ -58,6 +53,3 @@ class ProfilesURLsTestCase(TestCase):
         suggestion_view = resolve('/edit_comment/')
         self.assertEqual(suggestion_view.func.view_class, views.EditCommentView)
 
-    def test_like_comment_url(self):
-        suggestion_view = resolve('/like_comment/')
-        self.assertEqual(suggestion_view.func.view_class, views.LikeCommentView)

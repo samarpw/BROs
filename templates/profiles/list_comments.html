@@ -22,10 +22,11 @@
                 </div>
             </div>
             <div class="d-flex w-100 justify-content-between comment_field">
-                <a class="mb-1 comment_text">{{ comment.text }}</a>
+                <a class="mb-1 note_text">{{ comment.text }}</a>
                 {% if user.userprofile == comment.author %}
-                    <button class="btn btn-link btn-sm edit_comment"
-                            data-commentid="{{comment.id}}"
+                    <button class="btn btn-link btn-sm edit_note"
+                            data-noteid="{{comment.id}}"
+                            data-class="Comment"
                             data-text="{{comment.text}}">
                         Edit
                     </button>
