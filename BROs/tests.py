@@ -94,32 +94,32 @@ class UserTestCase(StaticLiveServerTestCase):
                          comments[0].find_element_by_css_selector('.author').text)
 
         # user can like post
-        like_post_count = int(self.browser.find_element_by_css_selector('.post_likes_count').text)
-        like_post_button = self.browser.find_element_by_css_selector('.like_post')
+        like_post_count = int(self.browser.find_element_by_css_selector('.post .likes_count').text)
+        like_post_button = self.browser.find_element_by_css_selector('.post .like')
         like_post_button.click()
         sleep(0.5)
         self.assertEqual(like_post_count + 1,
-                        int(self.browser.find_element_by_css_selector('.post_likes_count').text))
+                        int(self.browser.find_element_by_css_selector('.post .likes_count').text))
 
         # and unlike post
         like_post_button.click()
         sleep(0.5)
         self.assertEqual(like_post_count,
-                         int(self.browser.find_element_by_css_selector('.post_likes_count').text))
+                         int(self.browser.find_element_by_css_selector('.post .likes_count').text))
 
         # user can like comment
-        like_comment_count = int(self.browser.find_element_by_css_selector('.comment_likes_count').text)
-        like_comment_button = self.browser.find_element_by_css_selector('.like_comment')
+        like_comment_count = int(self.browser.find_element_by_css_selector('.comment .likes_count').text)
+        like_comment_button = self.browser.find_element_by_css_selector('.comment .like')
         like_comment_button.click()
         sleep(0.5)
         self.assertEqual(like_comment_count + 1,
-                         int(self.browser.find_element_by_css_selector('.comment_likes_count').text))
+                         int(self.browser.find_element_by_css_selector('.comment .likes_count').text))
 
         # and unlike comment
         like_comment_button.click()
         sleep(0.5)
         self.assertEqual(like_comment_count,
-                         int(self.browser.find_element_by_css_selector('.comment_likes_count').text))
+                         int(self.browser.find_element_by_css_selector('.comment .likes_count').text))
 
         # user can edit post
         self.browser.find_element_by_css_selector('.edit_post').click()

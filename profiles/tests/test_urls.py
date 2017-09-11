@@ -43,7 +43,7 @@ class ProfilesURLsTestCase(TestCase):
 
     def test_like_post_url(self):
         suggestion_view = resolve('/like_post/')
-        self.assertEqual(suggestion_view.func.view_class, views.LikePostView)
+        self.assertEqual(suggestion_view.func.view_class, views.LikeView)
 
     def test_add_comment_url(self):
         suggestion_view = resolve('/add_comment/')

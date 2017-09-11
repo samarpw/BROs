@@ -31,16 +31,17 @@
             </div>
 
             <div class="pull-right">
-                <button data-postid="{{post.id}}"
+                <button data-objectid="{{post.id}}"
                         data-profileid="{{userprofile.id}}"
-                        class="like_post btn btn-primary btn-sm"
+                        data-class="Post"
+                        class="like btn btn-primary btn-sm"
                         type="button">
                     {% if userprofile in post.likes.all %}
                         unLike
                     {% else %}
                         Like
                     {% endif %}
-                </button><span class="post_likes_count"> {{post.likes.count}}</span>
+                </button><span class="likes_count"> {{post.likes.count}}</span>
             </div>
             {% include 'profiles/list_comments.html' %}
         </div>

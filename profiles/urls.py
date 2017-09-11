@@ -9,6 +9,5 @@ urlpatterns = [
     url(r'^add_comment/$', views.AddCommentView.as_view(), name='add_comment'),
     url(r'^edit_comment/$', views.EditCommentView.as_view(), name='edit_comment'),
     url(r'^remove_comment/$', views.RemoveCommentView.as_view(), name='remove_comment'),
-    url(r'^like_post/$', views.LikePostView.as_view(), name='like_post'),
-    url(r'^like_comment/$', views.LikeCommentView.as_view(), name='like_comment'),
+    url(r'^like/$', views.LikeView.as_view(), name='like_post'),
 ]

@@ -9,6 +9,7 @@ from registration.backends.simple.views import RegistrationView
 from profiles.forms import UserProfileForm
 from profiles.models import User, UserProfile, Post, UserWall, Comment
 import json
+import sys
 
 
 class IndexView(TemplateView):
@@ -222,47 +223,24 @@ class RemoveCommentView(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class LikePostView(View):
+class LikeView(View):
 
     def get(self, request, *args, **kwargs):
-        post_id = str(request.GET.get('post_id'))
+        object_id = str(request.GET.get('object_id'))
         profile_id = str(request.GET.get('profile_id'))
+        object_class = str(request.GET.get('object_class'))
+        object_class = globals()[object_class]
         profile = UserProfile.objects.get(id=profile_id)
         likes = 0
         button = 'Like'
-        if post_id:
-            post = Post.objects.get(id=post_id)
+        if object_id:
+            obj = object_class.objects.get(id=object_id)
             try:
-                did_user_already_liked_post = post.likes.get(id=profile_id)
-                likes = post.unlike(profile)
+                did_user_already_liked_object = obj.likes.get(id=profile_id)
+                likes = obj.unlike(profile)
                 button = 'Like'
             except Exception as e:
-                likes = post.like(profile) if post else 0
-                button = 'unLike'
-        response = json.dumps({
-            'likes': likes,
-            'button': button
-        })
-        return HttpResponse(response, content_type='application/json')
-
-
-@method_decorator(login_required, name='dispatch')
-class LikeCommentView(View):
-
-    def get(self, request, *args, **kwargs):
-        comment_id = str(request.GET['comment_id'])
-        profile_id = str(request.GET['profile_id'])
-        profile = UserProfile.objects.get(id=profile_id)
-        likes = 0
-        button = 'Like'
-        if comment_id:
-            comment = Comment.objects.get(id=comment_id)
-            try:
-                did_user_already_liked_comment = comment.likes.get(id=profile_id)
-                likes = comment.unlike(profile)
-                button = 'Like'
-            except Exception as e:
-                likes = comment.like(profile) if comment else 0
+                likes = obj.like(profile) if obj else 0
                 button = 'unLike'
         response = json.dumps({
             'likes': likes,

@@ -32,9 +32,10 @@
                 {% endif %}
             </div>
             <div class="pull-right">
-                <button data-commentid="{{comment.id}}"
+                <button data-objectid="{{comment.id}}"
                         data-profileid="{{userprofile.id}}"
-                        class="like_comment btn btn-primary btn-sm"
+                        data-class="Comment"
+                        class="like btn btn-primary btn-sm"
                         type="button">
                 {% if userprofile in comment.likes.all %}
                     unLike
@@ -42,7 +43,7 @@
                     Like
                 {% endif %}
                 </button>
-                <span class="comment_likes_count"> {{comment.likes.count}}</span>
+                <span class="likes_count"> {{comment.likes.count}}</span>
             </div>
         </div>
     {% endfor %}

@@ -44,15 +44,35 @@ class UserWall(models.Model):
         return self.post_set.create(text=text, author=author)
 
 
-class Post(models.Model):
+class Likable(models.Model):
+    likes = models.ManyToManyField(UserProfile, blank=True, related_name='likes_%(class)s')
+
+    class Meta:
+        abstract = True
+
+    def like(self, user_profile):
+        self.likes.add(user_profile)
+        return self.likes.count()
+
+    def unlike(self, user_profile):
+        self.likes.remove(user_profile)
+        return self.likes.count()
+
+
+class Note(models.Model):
     text = models.CharField(blank=True, max_length=8128)
-    user_wall = models.ForeignKey(UserWall, null=True)
-    author = models.ForeignKey(UserProfile, related_name='post_author')
+    author = models.ForeignKey(UserProfile, related_name='author_%(class)s')
     date = models.DateTimeField(auto_now_add=True)
     attachment = models.FileField(upload_to=UserProfile.user_directory_path, blank=True)
-    likes = models.ManyToManyField(UserProfile, blank=True, related_name='post_like_user')
-    shares = models.ManyToManyField(UserProfile, blank=True, related_name='post_share_user')
     url = models.CharField(blank=True, max_length=256)
+
+    class Meta:
+        abstract = True
+
+
+class Post(Note, Likable):
+    user_wall = models.ForeignKey(UserWall, null=True)
+    shares = models.ManyToManyField(UserProfile, blank=True, related_name='post_share_user')
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.url = self.user_wall.profile.url + '#post_{}'.format(self.id)
@@ -61,38 +81,16 @@ class Post(models.Model):
     def add_comment(self, text, author):
         return self.comment_set.create(text=text, author=author)
 
-    def like(self, user_profile):
-        self.likes.add(user_profile)
-        return self.likes.count()
-
-    def unlike(self, user_profile):
-        self.likes.remove(user_profile)
-        return self.likes.count()
-
     def share(self, user_profile):
         user_profile.userwall.post_set.add(self)
         self.shares.add(user_profile)
         return self.shares.count()
 
 
-class Comment(models.Model):
-    text = models.CharField(blank=True, max_length=8128)
-    author = models.ForeignKey(UserProfile, related_name='comment_author')
+class Comment(Note, Likable):
     post = models.ForeignKey(Post, null=True)
-    date = models.DateTimeField(auto_now_add=True)
-    attachment = models.FileField(upload_to=UserProfile.user_directory_path, blank=True)
-    likes = models.ManyToManyField(UserProfile, blank=True, related_name='comment_like_user')
-    url = models.CharField(blank=True, max_length=256)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.url = self.post.user_wall.profile.url + '#comment_{}'.format(self.id)
         return super().save(force_insert=force_insert, force_update=force_update, using=using,
                             update_fields=update_fields)
-
-    def like(self, user_profile):
-        self.likes.add(user_profile)
-        return self.likes.count()
-
-    def unlike(self, user_profile):
-        self.likes.remove(user_profile)
-        return self.likes.count()
