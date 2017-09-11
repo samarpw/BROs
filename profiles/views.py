@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.views.generic import View, TemplateView, FormView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.utils import timezone
 from registration.backends.simple.views import RegistrationView
 from profiles.forms import UserProfileForm
@@ -31,6 +32,10 @@ class MyRegistrationView(RegistrationView):
     def get_success_url(self, user=None):
         return reverse('register_profile')
 
+    def form_invalid(self, form):
+        messages.error(self.request, 'Can\'t create user because: {}'.format(form.errors))
+        return super().form_invalid(form)
+
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
 
@@ -56,10 +61,11 @@ class RegisterProfileView(FormView):
         user_profile.user = self.request.user
         user_profile.save()
         UserWall.objects.create(profile=user_profile)
+        messages.info(self.request, '{} Profile created successfully!'.format(self.request.user.username))
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        print(form.errors)
+        messages.error(self.request, 'Couldn\'t create profile: {}'.format(form.errors))
         return super().form_invalid(form)
 
     def get(self, request, *args, **kwargs):
@@ -93,19 +99,20 @@ class ProfileView(FormView):
         if self.request.user.username == self.user.username:
             return super().post(request, *args, **kwargs)
         else:
-            print('{} not allowed to edit {} profile'.format(self.request.user.usernamem, self.user.username))
+            messages.error(request,
+                           '{} not allowed to edit {} profile'.format(self.request.user.usernamem, self.user.username))
             return super().get(request, *args, **kwargs)
 
     def get_form(self, *args, **kwargs):
-
         return self.form_class(self.request.POST, self.request.FILES, instance=self.userprofile)
 
     def form_valid(self, form):
         form.save(commit=True)
+        messages.info(self.request, 'User Profile updated successfully')
         return redirect('profile', self.user.username)
 
     def form_invalid(self, form):
-        print(form.errors)
+        messages.error(self.request, 'Couldn\'t update profile: {}'.format(form.errors))
         return super().form_invalid(form)
 
     def get(self, request, *args, **kwargs):
@@ -124,7 +131,8 @@ class AddPostView(View):
         author = UserProfile.objects.get(id=post_author_id)
         wall = UserWall.objects.get(id=post_wall_id)
         if post_text and author and wall:
-            Post.objects.create(text=post_text, author=author, user_wall=wall)
+            wall.add_post(text=post_text, author=author)
+        messages.info(request, 'Post added successfully!')
         return redirect(reverse('profile', kwargs={'username': wall.profile.user.username}))
 
     def update(self, request, *args, **kwargs):
@@ -134,6 +142,7 @@ class AddPostView(View):
         post.text = post_text
         post.date = timezone.now()
         post.save()
+        messages.info(request, 'Post updated successfully!')
         return redirect(reverse('profile', kwargs={'username': post.user_wall.profile.user.username}))
 
 
@@ -155,6 +164,9 @@ class RemovePostView(View):
         userprofile = UserProfile.objects.get(id=userprofile_id)
         if post.author == userprofile:
             post.delete()
+            messages.info(request, 'Post deleted!')
+        else:
+            messages.info(request, 'You are not authorised to remove this post!')
         return redirect(reverse('profile', kwargs={'username': post.user_wall.profile.user.username}))
 
 
@@ -170,8 +182,9 @@ class AddCommentView(View):
         author = UserProfile.objects.get(id=comment_author_id)
         post = Post.objects.get(id=post_id)
         if comment_text and author and post:
-            Comment.objects.create(text=comment_text, author=author, post=post)
-            return redirect(reverse('profile', kwargs={'username': post.user_wall.profile.user.username}))
+            post.add_comment(text=comment_text, author=author)
+            messages.info(request, 'Comment added successfully!')
+        return redirect(reverse('profile', kwargs={'username': post.user_wall.profile.user.username}))
 
     def update(self, request, *args, **kwargs):
         comment_id = request.POST.get('comment_id')
@@ -180,6 +193,7 @@ class AddCommentView(View):
         comment.text = comment_text
         comment.date = timezone.now()
         comment.save()
+        messages.info(request, 'Comment updated successfully!')
         return redirect(reverse('profile', kwargs={'username': comment.post.user_wall.profile.user.username}))
 
 
@@ -201,6 +215,9 @@ class RemoveCommentView(View):
         userprofile = UserProfile.objects.get(id=userprofile_id)
         if comment.author == userprofile:
             comment.delete()
+            messages.info(request, 'Comment deleted!')
+        else:
+            messages.info(request, 'You are not authorised to remove this comment!')
         return redirect(reverse('profile', kwargs={'username': comment.post.user_wall.profile.user.username}))
 
 

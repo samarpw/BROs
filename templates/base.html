@@ -93,6 +93,14 @@
             {% endblock %}
         </div>
         <div class="col-sm-9 offset-sm-3 col-md-10 offset-md-2 main">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %} alert-dismissable">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">&times;</a>
+                    <strong>{{message.tags}}!</strong> {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
             {% block body_block %}{% endblock %}
         </div>
     </div>

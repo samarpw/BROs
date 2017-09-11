@@ -10,7 +10,11 @@
                             {% csrf_token %}
                             <input type="hidden" name="post_id" value="{{post.id}}">
                             <input type="hidden" name="userprofile_id" value="{{user.userprofile.id}}">
-                            <button type="submit" class="btn btn-default btn-sm" id="remove_post_{{post.id}}">x</button>
+                            <button type="submit"
+                                    class="btn btn-default btn-sm"
+                                    id="remove_post_{{post.id}}">
+                                &times;
+                            </button>
                         </form>
                     {% endif %}
                 </div>
