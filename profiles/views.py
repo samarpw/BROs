@@ -9,7 +9,6 @@ from registration.backends.simple.views import RegistrationView
 from profiles.forms import UserProfileForm
 from profiles.models import User, UserProfile, Post, UserWall, Comment
 import json
-import sys
 
 
 class IndexView(TemplateView):
@@ -169,44 +168,30 @@ class EditNoteFormView(TemplateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class RemovePostView(View):
+class RemoveNoteView(View):
 
     def post(self, request, *args, **kwargs):
-        post_id = str(request.POST.get('post_id'))
-        userprofile_id = str(request.POST.get('userprofile_id'))
-        post = Post.objects.get(id=post_id)
+        note_id = request.POST.get('note_id')
+        class_name = request.POST.get('_class')
+        note_class = globals()[class_name]
+        userprofile_id = request.POST.get('userprofile_id')
+        note = note_class.objects.get(id=note_id)
         userprofile = UserProfile.objects.get(id=userprofile_id)
-        if post.author == userprofile:
-            post.delete()
-            messages.info(request, 'Post deleted!')
+        if note.author == userprofile:
+            note.delete()
+            messages.info(request, '{} deleted!'.format(class_name))
         else:
-            messages.info(request, 'You are not authorised to remove this post!')
-        return redirect(reverse('profile', kwargs={'username': post.get_wall().profile.user.username}))
-
-
-@method_decorator(login_required, name='dispatch')
-class RemoveCommentView(View):
-
-    def post(self, request, *args, **kwargs):
-        comment_id = str(request.POST.get('comment_id'))
-        userprofile_id = str(request.POST.get('userprofile_id'))
-        comment = Comment.objects.get(id=comment_id)
-        userprofile = UserProfile.objects.get(id=userprofile_id)
-        if comment.author == userprofile:
-            comment.delete()
-            messages.info(request, 'Comment deleted!')
-        else:
-            messages.info(request, 'You are not authorised to remove this comment!')
-        return redirect(reverse('profile', kwargs={'username': comment.get_wall().profile.user.username}))
+            messages.info(request, 'You are not authorised to remove this {}!'.format(class_name))
+        return redirect(reverse('profile', kwargs={'username': note.get_wall().profile.user.username}))
 
 
 @method_decorator(login_required, name='dispatch')
 class LikeView(View):
 
     def get(self, request, *args, **kwargs):
-        object_id = str(request.GET.get('object_id'))
-        profile_id = str(request.GET.get('profile_id'))
-        object_class = str(request.GET.get('object_class'))
+        object_id = request.GET.get('object_id')
+        profile_id = request.GET.get('profile_id')
+        object_class = request.GET.get('object_class')
         object_class = globals()[object_class]
         profile = UserProfile.objects.get(id=profile_id)
         likes = 0
