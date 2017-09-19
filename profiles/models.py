@@ -12,8 +12,11 @@ class UserProfile(models.Model):
     town = models.CharField(blank=True, max_length=128)
     relationship = models.CharField(blank=True, max_length=128,
                                     choices=[('1', 'married'), ('2', 'in relationship'), ('3', 'single')])
+    relation_user = models.ManyToManyField('self', blank=True,related_name='relationship')
     visible_name = models.CharField(blank=True, max_length=128)
     url = models.CharField(blank=True, max_length=256)
+    friends = models.ManyToManyField('self', blank=True, related_name='friends')
+    friend_requests = models.ManyToManyField('self', blank=True, related_name='friend_requests')
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.visible_name = self.get_visible_name()
@@ -22,6 +25,23 @@ class UserProfile(models.Model):
 
     def get_visible_name(self):
         return ' '.join([str(self.first_name), str(self.last_name)]).strip()
+
+    def send_friend_request(self, user_profile):
+        self.friend_requests.add(user_profile)
+        return self.friend_requests.count()
+
+    def cancel_friend_request(self, user_profile):
+        self.friend_requests.remove(user_profile)
+        return self.friend_requests.count()
+
+    def add_friend(self, user_profile):
+        self.cancel_friend_request(user_profile)
+        self.friends.add(user_profile)
+        return self.friends.count()
+
+    def remove_friend(self, user_profile):
+        self.friends.remove(user_profile)
+        return self.friends.count()
 
     def __str__(self):
         return self.get_visible_name()

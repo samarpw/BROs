@@ -17,8 +17,8 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         try:
-            self.userprofile = UserProfile.objects.get(user=self.request.user)
-            context['userprofile'] = self.userprofile
+            userprofile = UserProfile.objects.get(user=self.request.user)
+            context['userprofile'] = userprofile
         except Exception as e:
             context['userprofile'] = None
         return context
