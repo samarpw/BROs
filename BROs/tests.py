@@ -154,9 +154,16 @@ class UserTestCase(StaticLiveServerTestCase):
         self.create_user(self.user1, logout=True)
         self.create_user(self.user2)
 
+        # find user
+        name = ' '.join([self.user1['first_name'], self.user1['last_name']])
+        search_input = self.browser.find_element_by_css_selector('.search-form .search-input')
+        search_input.send_keys(self.user1['first_name'])
+        suggestion = self.browser.find_element_by_css_selector('#suggestions .search-result')
+        self.assertEqual(suggestion.get_attribute('value'), name)
+        search_input.send_keys(' {}'.format(self.user1['last_name']))
+        self.assertEqual(self.browser.current_url, self.live_server_url + '/profile/{}/'.format(self.user1['username']))
 
-
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         self.fail('Incomplete test')
 
     def create_user(self, user: dict, logout: bool=False):
