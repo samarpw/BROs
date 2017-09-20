@@ -30,33 +30,27 @@ class BaseModelTestCase(TestCase):
             relationship='married'
         )
 
-        self.user_1 = User.objects.create_user(username=self.user_dict_1['username'],
-                                               email=self.user_dict_1['email'],
-                                               password=self.user_dict_1['password'])
-        self.user_profile_1 = UserProfile.objects.create(user=self.user_1,
-                                                         avatar=self.user_dict_1['avatar'],
-                                                         first_name=self.user_dict_1['first_name'],
-                                                         last_name=self.user_dict_1['last_name'],
-                                                         birthday=self.user_dict_1['birthday'],
-                                                         town=self.user_dict_1['town'],
-                                                         relationship=self.user_dict_1['relationship'])
-        self.wall_1 = UserWall.objects.create(profile=self.user_profile_1)
-
-        self.user_2 = User.objects.create_user(username=self.user_dict_2['username'],
-                                                    email=self.user_dict_2['email'],
-                                                    password=self.user_dict_2['password'])
-        self.user_profile_2 = UserProfile.objects.create(user=self.user_2,
-                                                         avatar=self.user_dict_2['avatar'],
-                                                         first_name=self.user_dict_2['first_name'],
-                                                         last_name=self.user_dict_2['last_name'],
-                                                         birthday=self.user_dict_2['birthday'],
-                                                         town=self.user_dict_2['town'],
-                                                         relationship=self.user_dict_2['relationship'])
-        self.wall_2 = UserWall.objects.create(profile=self.user_profile_2)
+        self.user_1, self.user_profile_1, self.wall_1 = self.create_user(self.user_dict_1)
+        self.user_2, self.user_profile_2, self.wall_2 = self.create_user(self.user_dict_2)
 
         self.visible_name = ' '.join([self.user_dict_1['first_name'], self.user_dict_1['last_name']])
         self.post_text = 'test post'
         self.comment_text = 'test comment'
+
+    @staticmethod
+    def create_user(user_dict):
+        user = User.objects.create_user(username=user_dict['username'],
+                                        email=user_dict['email'],
+                                        password=user_dict['password'])
+        user_profile = UserProfile.objects.create(user=user,
+                                                  avatar=user_dict['avatar'],
+                                                  first_name=user_dict['first_name'],
+                                                  last_name=user_dict['last_name'],
+                                                  birthday=user_dict['birthday'],
+                                                  town=user_dict['town'],
+                                                  relationship=user_dict['relationship'])
+        wall = UserWall.objects.create(profile=user_profile)
+        return user, user_profile, wall
 
 
 class UserProfileModelTestCase(BaseModelTestCase):
@@ -71,7 +65,7 @@ class UserProfileModelTestCase(BaseModelTestCase):
         self.assertEqual(self.user_profile_1.town, self.user_dict_1['town'])
         self.assertEqual(self.user_profile_1.relationship, self.user_dict_1['relationship'])
         self.assertEqual(self.user_profile_1.visible_name, self.visible_name)
-        self.assertEqual(self.user_profile_1.url, '/profile/{}/'.format(self.user_1.username))
+        self.assertEqual(self.user_profile_1.url, '/profile/{}/'.format(self.user_dict_1['username']))
 
     def test_user_visible_name(self):
         """Test visible name returned from Userprofile"""
@@ -79,8 +73,14 @@ class UserProfileModelTestCase(BaseModelTestCase):
 
     def test_user_can_add_friend(self):
         """Test user is able to add a friend"""
-
-        self.fail('Incomplete test')
+        self.user_profile_1.send_friend_request(self.user_profile_2)
+        friend_request = self.user_profile_1.friend_requests.all()[0]
+        self.assertEqual(friend_request, self.user_profile_2)
+        self.user_profile_1.add_friend(friend_request)
+        self.assertEqual(self.user_profile_1.friends.all()[0], self.user_profile_2)
+        self.assertFalse(self.user_profile_1.friend_requests.all())
+        self.user_profile_1.remove_friend(friend_request)
+        self.assertFalse(self.user_profile_1.friends.all())
 
 
 class UserWallModelTestCase(BaseModelTestCase):
