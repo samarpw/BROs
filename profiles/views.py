@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.utils import timezone
 from registration.backends.simple.views import RegistrationView
 from profiles.forms import UserProfileForm
-from profiles.models import User, UserProfile, UserWall
+from profiles.models import User, UserProfile, UserWall, Notification
 import json
 
 
@@ -220,8 +220,19 @@ class FriendsListView(TemplateView):
         username = kwargs.get('username')
         user = User.objects.get(username=username)
         userprofile = UserProfile.objects.get(user=user)
-        return {'requests': userprofile.friend_requests.all(),
+        return {'profile': userprofile,
+                'requests': userprofile.friend_requests.all(),
                 'friends': userprofile.friends.all()}
+
+
+@method_decorator(login_required, name='dispatch')
+class NotificationsListView(ListView):
+    model = Notification
+    template_name = 'profiles/list_notifications.html'
+    context_object_name = 'notifications'
+
+    def get_queryset(self):
+        return self.request.user.userprofile.notification_set.all()
 
 
 @method_decorator(login_required, name='dispatch')

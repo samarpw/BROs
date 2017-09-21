@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^send_friend_request/$', views.SendFriendRequestView.as_view(), name='send_friend_request'),
     url(r'^like/$', views.LikeView.as_view(), name='like_post'),
     url(r'^profile/(?P<username>[\w\-]+)/friends/$', views.FriendsListView.as_view(), name='friends'),
+    url(r'^notifications/$', views.NotificationsListView.as_view(), name='notifications'),
 ]

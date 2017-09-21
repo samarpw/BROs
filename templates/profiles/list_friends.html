@@ -5,7 +5,8 @@
 
 {% block sidebar_block %}
 <strong>Friend Requests</strong>
-<div class="post_list list-group">
+<div class="request_list list-group">
+    {% if profile == user.userprofile %}
     {% if requests %}
     {% for requester in requests %}
         <div class="request list-group-item list-group-item-action flex-column align-items-start">
@@ -26,12 +27,13 @@
         <br>
     {% endfor %}
     {% endif %}
+    {% endif %}
 </div>
 {% endblock %}
 
 {% block body_block %}
 <strong>Friends:</strong>
-<div class="post_list list-group">
+<div class="friend_list list-group">
     {% if friends %}
     {% for friend in friends %}
         <div class="friend list-group-item list-group-item-action flex-column align-items-start">

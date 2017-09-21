@@ -37,7 +37,9 @@
         <ul class="navbar-nav mr-auto">
         {% if user.is_authenticated %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'profile' user.username %}">Profile</a>
+                <a class="nav-link" id="profile" href="{% url 'profile' user.username %}">
+                    {{user.userprofile.first_name}}
+                </a>
             </li>
             <li class="nav-item">
                 <form class="form-inline mt-2 mt-md-0 search-form">
@@ -54,13 +56,16 @@
         <ul class="navbar-nav navbar-right">
         {% if user.is_authenticated %}
             <li class="nav-item">
-                <a class="nav-link">
-                    {% if user.userprofile.notifications.all %}
-                        <strong>N ({{user.userprofile.notifications.count}})</strong>
+                <a class="nav-link" id="notifications" href="/notifications/">
+                    {% if user.userprofile.notification_set.all %}
+                        <strong class="text-warning">N ({{user.userprofile.notification_set.count}})</strong>
                     {% else %}
                         N
                     {% endif %}
                 </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="friends" href="/profile/{{user.username}}/friends/">Friends</a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle"
@@ -85,7 +90,7 @@
                 <a class="nav-link" id="login" href="{% url 'auth_login' %}">Log In</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="sign_up" href="{% url 'registration_register' %}">Sign Up</a>
+                <a class="nav-link" id="signup" href="{% url 'registration_register' %}">Sign Up</a>
             </li>
         {% endif %}
         </ul>

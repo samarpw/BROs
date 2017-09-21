@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}Notifications{% endblock %}
+
+{% block body_block %}
+<strong>Notifications</strong>
+<div class="notification_list list-group">
+    {% if notifications %}
+    {% for notification in notifications %}
+        <div class="notification list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between">
+                <div class="d-flex">
+                    <small class="date">{{ notification.date }}</small>
+                </div>
+            </div>
+            <div class="d-flex w-100 justify-content-between notification_field">
+                <a class="mb-1 notification_text" href="{{notification.url}}">{{ notification.text }}</a>
+            </div>
+        </div>
+        <br>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

@@ -55,16 +55,16 @@ class UserTestCase(StaticLiveServerTestCase):
         # and sees name of the site in the heading
         self.assertEqual(self.browser.find_element_by_css_selector('.navbar-brand').text, 'BROs')
         # and login and register menus
-        log_in_button = self.browser.find_element_by_link_text('Log In')
+        log_in_button = self.browser.find_element_by_id('login')
         self.assertIsNotNone(log_in_button)
-        sign_up_button = self.browser.find_element_by_link_text('Sign Up')
+        sign_up_button = self.browser.find_element_by_id('signup')
         self.assertIsNotNone(sign_up_button)
         # can create user
         self.create_user(self.user1)
         # Profile and Logout menus are visible
-        profile_button = self.browser.find_element_by_link_text('Profile')
+        profile_button = self.browser.find_element_by_id('profile')
         self.assertIsNotNone(profile_button)
-        logout_button = self.browser.find_element_by_link_text('Logout')
+        logout_button = self.browser.find_element_by_id('logout')
         self.assertIsNotNone(logout_button)
         # Profile have correct informations
         self.validate_user(self.user1)
