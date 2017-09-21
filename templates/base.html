@@ -53,6 +53,15 @@
         </ul>
         <ul class="navbar-nav navbar-right">
         {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link">
+                    {% if user.userprofile.notifications.all %}
+                        <strong>N ({{user.userprofile.notifications.count}})</strong>
+                    {% else %}
+                        N
+                    {% endif %}
+                </a>
+            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle"
                    href="http://example.com"
@@ -69,14 +78,14 @@
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'auth_logout' %}?next=/">Logout</a>
+                <a class="nav-link" id="logout" href="{% url 'auth_logout' %}?next=/">Logout</a>
             </li>
         {% else %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'auth_login' %}">Log In</a>
+                <a class="nav-link" id="login" href="{% url 'auth_login' %}">Log In</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'registration_register' %}">Sign Up</a>
+                <a class="nav-link" id="sign_up" href="{% url 'registration_register' %}">Sign Up</a>
             </li>
         {% endif %}
         </ul>

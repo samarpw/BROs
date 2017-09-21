@@ -36,4 +36,10 @@ $(".search-input").on('input', function () {
         window.location.href = chosen.data("url");
     }
 });
-
+$("#send_friend_request").click(function(){
+    var profileid = $(this).attr("data-profileid");
+    var requesterid = $(this).attr("data-requesterid");
+    $.get('/send_friend_request/', {requester_id: requesterid, profile_id: profileid}, function(data){
+        $('#user_relation_status').html("Friend request pending...<button id=\"cancel_friend_request\" data-profileid=\"{{userprofile.id}}\">Cancel</button>");
+    });
+});

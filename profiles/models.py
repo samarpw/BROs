@@ -3,6 +3,51 @@ from django.contrib.auth.models import User
 from django.shortcuts import reverse
 
 
+class Notification(models.Model):
+    type = models.CharField(blank=False, max_length=64)
+    text = models.CharField(blank=True, max_length=128)
+    url = models.CharField(blank=True, max_length=256)
+    sender = models.CharField(blank=True, max_length=128)
+    date = models.DateTimeField(auto_now_add=True)
+
+    FRIEND_REQUEST = 'friend_request'
+    _FRIEND_REQUEST_TEXT = '{} send you friend request!'
+    ACCEPTED_FRIEND_REQUEST = 'accept_friend_request'
+    _ACCEPTED_FRIEND_REQUEST_TEXT = '{} accepted your request. You are now friends!'
+    DECLINED_FRIEND_REQUEST = 'decline_friend_request'
+    _DECLINED_FRIEND_REQUEST_TEXT = '{} declined your friend request.'
+    REMOVED_FRIEND = 'removed_friend'
+    _REMOVED_FRIEND_TEXT = '{} removed you from friends.'
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.type == Notification.FRIEND_REQUEST:
+            assert self.sender, 'Provide username for friend request'
+            sender_user = User.objects.get(username=self.sender)
+            sender_profile = UserProfile.objects.get(user=sender_user)
+            self.text = self._FRIEND_REQUEST_TEXT.format(sender_profile.visible_name)
+            self.url = reverse('friend_requests', kwargs={'username': sender_profile.user.username})
+        elif self.type == Notification.ACCEPTED_FRIEND_REQUEST:
+            assert self.sender, 'Provide username for accepted request'
+            sender_user = User.objects.get(username=self.sender)
+            sender_profile = UserProfile.objects.get(user=sender_user)
+            self.text = self._ACCEPTED_FRIEND_REQUEST_TEXT.format(sender_profile.visible_name)
+            self.url = reverse('friends', kwargs={'username': sender_profile.user.username})
+        elif self.type == Notification.DECLINED_FRIEND_REQUEST:
+            assert self.sender, 'Provide username for declined request'
+            sender_user = User.objects.get(username=self.sender)
+            sender_profile = UserProfile.objects.get(user=sender_user)
+            self.text = self._DECLINED_FRIEND_REQUEST_TEXT.format(sender_profile.visible_name)
+            self.url = reverse('friend_requests', kwargs={'username': sender_profile.user.username})
+        elif self.type == Notification.REMOVED_FRIEND:
+            assert self.sender, 'Provide username of friend who removed you'
+            sender_user = User.objects.get(username=self.sender)
+            sender_profile = UserProfile.objects.get(user=sender_user)
+            self.text = self._REMOVED_FRIEND_TEXT.format(sender_profile.visible_name)
+            self.url = reverse('friends', kwargs={'username': sender_profile.user.username})
+
+        return super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     first_name = models.CharField(blank=True, max_length=128)
@@ -12,11 +57,12 @@ class UserProfile(models.Model):
     town = models.CharField(blank=True, max_length=128)
     relationship = models.CharField(blank=True, max_length=128,
                                     choices=[('1', 'married'), ('2', 'in relationship'), ('3', 'single')])
-    relation_user = models.ManyToManyField('self', blank=True,related_name='relationship')
+    relation_user = models.ManyToManyField('self', blank=True, related_name='relationship')
     visible_name = models.CharField(blank=True, max_length=128)
     url = models.CharField(blank=True, max_length=256)
     friends = models.ManyToManyField('self', blank=True, related_name='friends')
     friend_requests = models.ManyToManyField('self', blank=True, related_name='friend_requests')
+    notifications = models.ManyToManyField(Notification, blank=True)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.visible_name = self.get_visible_name()
@@ -28,19 +74,29 @@ class UserProfile(models.Model):
 
     def send_friend_request(self, user_profile):
         self.friend_requests.add(user_profile)
+        noti = Notification.objects.create(type=Notification.FRIEND_REQUEST, sender=user_profile.user.username)
+        self.notifications.add(noti)
         return self.friend_requests.count()
 
     def cancel_friend_request(self, user_profile):
         self.friend_requests.remove(user_profile)
+        Notification.objects.get(type=Notification.FRIEND_REQUEST, sender=user_profile.user.username).delete()
+        noti = Notification.objects.create(type=Notification.DECLINED_FRIEND_REQUEST, sender=self.user.username)
+        user_profile.notifications.add(noti)
         return self.friend_requests.count()
 
     def add_friend(self, user_profile):
-        self.cancel_friend_request(user_profile)
+        self.friend_requests.remove(user_profile)
+        Notification.objects.get(type=Notification.FRIEND_REQUEST, sender=user_profile.user.username).delete()
         self.friends.add(user_profile)
+        noti = Notification.objects.create(type=Notification.ACCEPTED_FRIEND_REQUEST, sender=self.user.username)
+        user_profile.notifications.add(noti)
         return self.friends.count()
 
     def remove_friend(self, user_profile):
         self.friends.remove(user_profile)
+        noti = Notification.objects.create(type=Notification.REMOVED_FRIEND, sender=self.user.username)
+        user_profile.notifications.add(noti)
         return self.friends.count()
 
     def __str__(self):

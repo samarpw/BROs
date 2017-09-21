@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}{{ selecteduser.username }} Friends{% endblock %}
+
+{% block sidebar_block %}
+<strong>Friend Requests</strong>
+<div class="post_list list-group">
+    {% if requests %}
+    {% for requester in requests %}
+        <div class="request list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between request_field">
+                <a class="mb-1 sender" href="/profile/{{requester.user.username}}/">{{ requester.visible_name }}</a>
+            </div>
+            <div class="pull-right">
+                <button class="accept_request btn btn-success btn-sm"
+                        type="button">
+                    Accept
+                </button>
+                <button class="decline_request btn btn-danger btn-sm"
+                        type="button">
+                    Decline
+                </button>
+            </div>
+        </div>
+        <br>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block body_block %}
+<strong>Friends:</strong>
+<div class="post_list list-group">
+    {% if friends %}
+    {% for friend in friends %}
+        <div class="friend list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between friend_field">
+                <a class="mb-1 sender" href="/profile/{{friend.user.username}}/">{{ friend.visible_name }}</a>
+                <button class="remove_friend btn btn-primary btn-sm"
+                        type="button">
+                    Remove
+                </button>
+            </div>
+        </div>
+        <br>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

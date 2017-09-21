@@ -24,6 +24,23 @@
                 <a href="{% url 'auth_password_change' %}">Change Password</a>
             </div>
         {% else %}
+            <div id="user_relation_status">
+            {% if user.userprofile in userprofile.friends.all %}
+                <button id="remove_friend" data-requesterid="{{user.userprofile.id}}" data-profileid="{{userprofile.id}}">
+                    Remove friend
+                </button>
+            {% elif user.userprofile in userprofile.friend_requests.all %}
+                Friend request pending...
+                <button id="cancel_friend_request" data-requesterid="{{user.userprofile.id}}" data-profileid="{{userprofile.id}}">
+                    Cancel
+                </button>
+            {% else %}
+                <button id="send_friend_request" data-requesterid="{{user.userprofile.id}}" data-profileid="{{userprofile.id}}">
+                    Send friend request
+                </button>
+            {% endif %}
+            </div>
+            <br>
             <p>Name: {{ userprofile.first_name }}</p>
             <p>Surname: {{ userprofile.last_name }}</p>
             <p>Birthday: {{ userprofile.birthday }}</p>

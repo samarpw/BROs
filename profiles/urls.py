@@ -7,5 +7,7 @@ urlpatterns = [
     url(r'^edit_note/$', views.EditNoteView.as_view(), name='edit_note'),
     url(r'^edit_note_form/$', views.EditNoteFormView.as_view(), name='edit_note_form'),
     url(r'^remove_note/$', views.RemoveNoteView.as_view(), name='remove_note'),
+    url(r'^send_friend_request/$', views.SendFriendRequestView.as_view(), name='send_friend_request'),
     url(r'^like/$', views.LikeView.as_view(), name='like_post'),
+    url(r'^profile/(?P<username>[\w\-]+)/friends/$', views.FriendsListView.as_view(), name='friends'),
 ]

@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.core.urlresolvers import reverse_lazy
-from django.views.generic import View, TemplateView, FormView
+from django.views.generic import View, TemplateView, FormView, ListView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from registration.backends.simple.views import RegistrationView
 from profiles.forms import UserProfileForm
-from profiles.models import User, UserProfile, Post, UserWall, Comment
+from profiles.models import User, UserProfile, UserWall
 import json
 
 
@@ -134,7 +134,7 @@ class AddNoteView(View):
         if note_text and author and parent:
             note = parent.add_note(text=note_text, author=author)
             messages.info(request, '{} added successfully!'.format(note_class.__name__))
-            return redirect(reverse('profile', kwargs={'username': note.get_wall().profile.user.username}))
+            return redirect('profile', username=note.get_wall().profile.user.username)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -145,12 +145,12 @@ class EditNoteView(View):
         note_class = globals()[note_class]
         note_text = request.POST.get('note_text')
         note_id = request.POST.get('note_id')
-        note = note_class.objects.get(id=str(note_id))
+        note = note_class.objects.get(id=note_id)
         note.text = note_text
         note.date = timezone.now()
         note.save()
         messages.info(request, '{} updated successfully!'.format(note_class.__name__))
-        return redirect(reverse('profile', kwargs={'username': note.get_wall().profile.user.username}))
+        return redirect('profile', username=note.get_wall().profile.user.username)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -182,7 +182,7 @@ class RemoveNoteView(View):
             messages.info(request, '{} deleted!'.format(class_name))
         else:
             messages.info(request, 'You are not authorised to remove this {}!'.format(class_name))
-        return redirect(reverse('profile', kwargs={'username': note.get_wall().profile.user.username}))
+        return redirect('profile', username=note.get_wall().profile.user.username)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -210,6 +210,47 @@ class LikeView(View):
             'button': button
         })
         return HttpResponse(response, content_type='application/json')
+
+
+@method_decorator(login_required, name='dispatch')
+class FriendsListView(TemplateView):
+    template_name = 'profiles/list_friends.html'
+
+    def get_context_data(self, **kwargs):
+        username = kwargs.get('username')
+        user = User.objects.get(username=username)
+        userprofile = UserProfile.objects.get(user=user)
+        return {'requests': userprofile.friend_requests.all(),
+                'friends': userprofile.friends.all()}
+
+
+@method_decorator(login_required, name='dispatch')
+class SendFriendRequestView(View):
+
+    def get(self, request, *args, **kwargs):
+        profile_id = request.GET.get('profile_id')
+        requester_id = request.GET.get('requester_id')
+        target = UserProfile.objects.get(id=profile_id)
+        requester = UserProfile.objects.get(id=requester_id)
+        target.send_friend_request(requester)
+        message = 'Friend request to {} sent!'.format(target.visible_name)
+        messages.info(request, message)
+        return redirect('profile', username=target.user.username)
+
+
+@method_decorator(login_required, name='dispatch')
+class CancelFriendRequestView(View):
+    pass
+
+
+@method_decorator(login_required, name='dispatch')
+class AddFriendView(View):
+    pass
+
+
+@method_decorator(login_required, name='dispatch')
+class RemoveFriendView(View):
+    pass
 
 
 @method_decorator(login_required, name='dispatch')

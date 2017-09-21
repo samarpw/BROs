@@ -163,7 +163,13 @@ class UserTestCase(StaticLiveServerTestCase):
         search_input.send_keys(' {}'.format(self.user1['last_name']))
         self.assertEqual(self.browser.current_url, self.live_server_url + '/profile/{}/'.format(self.user1['username']))
 
-        # import pdb;pdb.set_trace()
+        # send friend request
+        self.browser.find_element_by_id('send_friend_request').click()
+
+        # login 1st user
+        self.login_user(self.user1)
+
+        import pdb;pdb.set_trace()
         self.fail('Incomplete test')
 
     def create_user(self, user: dict, logout: bool=False):
@@ -206,3 +212,13 @@ class UserTestCase(StaticLiveServerTestCase):
         self.assertEqual(Select(self.browser.find_element_by_id('id_relationship')).first_selected_option.text,
                          user['relationship'])
         self.browser.find_element_by_link_text('BROs').click()
+
+    def login_user(self, user: dict):
+        try:
+            self.browser.find_element_by_id('logout').click()
+        except:
+            pass
+        self.browser.find_element_by_id('login').click()
+        self.browser.find_element_by_id('id_username').send_keys(user['username'])
+        self.browser.find_element_by_id('id_password').send_keys(user['password'])
+        self.browser.find_element_by_css_selector('.form-signin button').click()
