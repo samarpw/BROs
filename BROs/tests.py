@@ -12,7 +12,7 @@ class UserTestCase(StaticLiveServerTestCase):
     def setUp(self):
         chrome_driver_path = get_env_variable('CHROMEDRIVER_PATH')
         self.browser = webdriver.Chrome(chrome_driver_path)
-        self.browser.implicitly_wait(2)
+        self.browser.implicitly_wait(3)
         self.user1 = dict(
             username='jan_nowak',
             email='nowak@gmail.com',
@@ -61,9 +61,11 @@ class UserTestCase(StaticLiveServerTestCase):
         self.assertIsNotNone(sign_up_button)
         # can create user
         self.create_user(self.user1)
-        # Profile and Logout menus are visible
+        # Profile Friends and Logout menus are visible
         profile_button = self.browser.find_element_by_id('profile')
         self.assertIsNotNone(profile_button)
+        friends_button = self.browser.find_element_by_id('friends')
+        self.assertIsNotNone(friends_button)
         logout_button = self.browser.find_element_by_id('logout')
         self.assertIsNotNone(logout_button)
         # Profile have correct informations
@@ -185,6 +187,21 @@ class UserTestCase(StaticLiveServerTestCase):
         friend_request = self.browser.find_element_by_css_selector('.request')
         self.assertTrue(user2_visible_name in friend_request.find_element_by_css_selector('.request_field').text)
         friend_request.find_element_by_css_selector('.accept_request').click()
+        sleep(1)
+        self.assertEqual(self.browser.find_element_by_id('notification_icon').text, 'N')
+        self.assertFalse(self.browser.find_elements_by_css_selector('.request'))
+        self.assertTrue(user2_visible_name in self.browser.find_element_by_css_selector('.friend').text)
+
+        self.login_user(self.user2)
+        notifications_icon = self.browser.find_element_by_id('notification_icon')
+        number_of_notifications = int(notifications_icon.text.split('(')[1].split(')')[0])
+        notifications_icon.click()
+        notification = self.browser.find_element_by_css_selector('.notification_text')
+        self.assertTrue(user1_visible_name in notification.text and 'You are now friends' in notification.text)
+        self.assertEqual(number_of_notifications, 1)
+        self.browser.find_element_by_id('friends').click()
+        friend = self.browser.find_element_by_css_selector('.friend')
+        self.assertTrue(user1_visible_name in friend.text)
 
         import pdb;pdb.set_trace()
         self.fail('Incomplete test')
