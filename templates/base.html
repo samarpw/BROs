@@ -56,7 +56,7 @@
         <ul class="navbar-nav navbar-right">
         {% if user.is_authenticated %}
             <li class="nav-item">
-                <a class="nav-link" id="notifications" href="/notifications/">
+                <a class="nav-link" id="notification_icon" href="/notifications/">
                     {% if user.userprofile.notification_set.all %}
                         <strong class="text-warning">N ({{user.userprofile.notification_set.count}})</strong>
                     {% else %}

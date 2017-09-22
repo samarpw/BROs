@@ -76,11 +76,17 @@ class UserProfileModelTestCase(BaseModelTestCase):
         self.user_profile_1.send_friend_request(self.user_profile_2)
         friend_request = self.user_profile_1.friend_requests.all()[0]
         self.assertEqual(friend_request, self.user_profile_2)
+        self.assertEqual(self.user_profile_1.notification_set.count(), 1)
         self.user_profile_1.add_friend(friend_request)
+        self.assertEqual(self.user_profile_1.notification_set.count(), 0)
+        self.assertEqual(self.user_profile_2.notification_set.count(), 1)
         self.assertEqual(self.user_profile_1.friends.all()[0], self.user_profile_2)
+        self.assertEqual(self.user_profile_2.friends.all()[0], self.user_profile_1)
         self.assertFalse(self.user_profile_1.friend_requests.all())
         self.user_profile_1.remove_friend(friend_request)
         self.assertFalse(self.user_profile_1.friends.all())
+        self.assertFalse(self.user_profile_2.friends.all())
+        self.assertEqual(self.user_profile_2.notification_set.count(), 2)
 
 
 class UserWallModelTestCase(BaseModelTestCase):

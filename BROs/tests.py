@@ -155,11 +155,11 @@ class UserTestCase(StaticLiveServerTestCase):
         self.create_user(self.user2)
 
         # find user
-        name = ' '.join([self.user1['first_name'], self.user1['last_name']])
+        user1_visible_name = ' '.join([self.user1['first_name'], self.user1['last_name']])
         search_input = self.browser.find_element_by_css_selector('.search-form .search-input')
         search_input.send_keys(self.user1['first_name'])
         suggestion = self.browser.find_element_by_css_selector('#suggestions .search-result')
-        self.assertEqual(suggestion.get_attribute('value'), name)
+        self.assertEqual(suggestion.get_attribute('value'), user1_visible_name)
         search_input.send_keys(' {}'.format(self.user1['last_name']))
         self.assertEqual(self.browser.current_url, self.live_server_url + '/profile/{}/'.format(self.user1['username']))
 
@@ -168,6 +168,23 @@ class UserTestCase(StaticLiveServerTestCase):
 
         # login 1st user
         self.login_user(self.user1)
+
+        # assert Notification icon is present
+        notifications_icon = self.browser.find_element_by_id('notification_icon')
+        number_of_notifications = int(notifications_icon.text.split('(')[1].split(')')[0])
+        self.assertEqual(number_of_notifications, 1)
+
+        # show notifications
+        notifications_icon.click()
+        notification = self.browser.find_element_by_css_selector('.notification_text')
+        user2_visible_name = ' '.join([self.user2['first_name'], self.user2['last_name']])
+        self.assertTrue(user2_visible_name in notification.text and 'friend request' in notification.text)
+
+        # accept request
+        notification.click()
+        friend_request = self.browser.find_element_by_css_selector('.request')
+        self.assertTrue(user2_visible_name in friend_request.find_element_by_css_selector('.request_field').text)
+        friend_request.find_element_by_css_selector('.accept_request').click()
 
         import pdb;pdb.set_trace()
         self.fail('Incomplete test')

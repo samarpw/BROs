@@ -36,21 +36,23 @@ class UserProfile(models.Model):
         self.friend_requests.remove(user_profile)
         self.notification_set.get(type=Notification.FRIEND_REQUEST, sender=user_profile.user.username).delete()
         noti = Notification.objects.create(owner=user_profile, type=Notification.DECLINED_FRIEND_REQUEST, sender=self.user.username)
-        user_profile.notifications.add(noti)
+        user_profile.notification_set.add(noti)
         return self.friend_requests.count()
 
     def add_friend(self, user_profile):
         self.friend_requests.remove(user_profile)
         self.notification_set.get(type=Notification.FRIEND_REQUEST, sender=user_profile.user.username).delete()
         self.friends.add(user_profile)
+        user_profile.friends.add(self)
         noti = Notification.objects.create(owner=user_profile, type=Notification.ACCEPTED_FRIEND_REQUEST, sender=self.user.username)
-        user_profile.notifications.add(noti)
+        user_profile.notification_set.add(noti)
         return self.friends.count()
 
     def remove_friend(self, user_profile):
         self.friends.remove(user_profile)
+        user_profile.friends.remove(self)
         noti = Notification.objects.create(owner=user_profile, type=Notification.REMOVED_FRIEND, sender=self.user.username)
-        user_profile.notifications.add(noti)
+        user_profile.notification_set.add(noti)
         return self.friends.count()
 
     def __str__(self):
