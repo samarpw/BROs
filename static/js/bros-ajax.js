@@ -4,7 +4,7 @@ $('.like').click(function(){
     var objectclass = $(this).attr("data-class");
     var count = $(this).parent().find('.likes_count');
     var button = $(this)
-    $.get('/like/', {object_id: objectid, profile_id: profileid, object_class: objectclass}, function(data){
+    $.get('/like/', {object_id: objectid, profile_id: profileid, _class: objectclass}, function(data){
         count.html(data['likes']);
         button.html(data['button']);
     });

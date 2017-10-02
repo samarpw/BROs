@@ -6,8 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from registration.backends.simple.views import RegistrationView
-from profiles.forms import UserProfileForm
-from profiles.models import User, UserProfile, UserWall, Notification
+from profiles.forms import *
+from profiles.models import *
 import json
 
 
@@ -191,7 +191,7 @@ class LikeView(View):
     def get(self, request, *args, **kwargs):
         object_id = request.GET.get('object_id')
         profile_id = request.GET.get('profile_id')
-        object_class = request.GET.get('object_class')
+        object_class = request.GET.get('_class')
         object_class = globals()[object_class]
         profile = UserProfile.objects.get(id=profile_id)
         likes = 0
