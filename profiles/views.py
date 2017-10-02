@@ -256,7 +256,19 @@ class CancelFriendRequestView(View):
 
 @method_decorator(login_required, name='dispatch')
 class AddFriendView(View):
-    pass
+
+    def get(self, request, *args, **kwargs):
+        try:
+            profile_id = request.GET.get('profile_id')
+            requester_id = request.GET.get('requester_id')
+            target = UserProfile.objects.get(id=profile_id)
+            requester = UserProfile.objects.get(id=requester_id)
+            target.add_friend(requester)
+            message = 'Added friend {}!'.format(target.visible_name)
+            messages.info(request, message)
+            return redirect('friends', username=target.user.username)
+        except Exception as e:
+            print('Error: {}'.format(e))
 
 
 @method_decorator(login_required, name='dispatch')

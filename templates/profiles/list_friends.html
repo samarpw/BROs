@@ -15,10 +15,14 @@
             </div>
             <div class="pull-right">
                 <button class="accept_request btn btn-success btn-sm"
+                        data-profileid="{{user.userprofile.id}}"
+                        data-requesterid="{{requester.id}}"
                         type="button">
                     Accept
                 </button>
                 <button class="decline_request btn btn-danger btn-sm"
+                        data-profileid="{{user.userprofile.id}}"
+                        data-requesterid="{{requester.id}}"
                         type="button">
                     Decline
                 </button>
